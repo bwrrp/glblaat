@@ -6,7 +6,8 @@
 #include <string>
 #include <vector>
 
-class GLTextureManager {
+class GLTextureManager 
+{
 public:
 	static GLTextureManager *New();
 	~GLTextureManager();
@@ -17,15 +18,17 @@ public:
 	GLTexture *RemoveTexture(const std::string &name);
 	void DeleteTexture(const std::string &name);
 
+	void BeginNewPass();
 	void Bind();
 	void Unbind();
 
-	void SetupProgram(GLProgram &prog);
+	bool SetupProgram(GLProgram &prog);
 
-private:
-	std::map<std::string, GLTexture*> textures;
-	std::map<std::string, int> texunits;
-	std::map<int, std::string> texnames; // inverse map of texunits
+protected:
+	class GLManagedTexture;
+
+	std::map<std::string, GLManagedTexture*> textures;
+	std::vector<GLManagedTexture*> assignments;
 	std::vector<bool> inuse;
 
 	GLTextureManager();

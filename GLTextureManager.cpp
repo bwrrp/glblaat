@@ -1,178 +1,307 @@
 #include "GLTextureManager.h"
 
 #include <iostream>
+#include <cassert>
 
 using namespace std;
 
-GLTextureManager *GLTextureManager::New() {
-	if (GLEW_VERSION_1_3) {
+// ----------------------------------------------------------------------------
+class GLTextureManager::GLManagedTexture
+{
+public:
+	GLManagedTexture(const std::string &name, GLTexture *texture)
+	{
+		this->name = name;
+		this->texture = texture;
+		this->slot = -1;
+	}
+
+	string name;
+	GLTexture *texture;
+	int slot;
+};
+
+// ----------------------------------------------------------------------------
+GLTextureManager *GLTextureManager::New() 
+{
+	if (GLEW_VERSION_1_3) 
+	{
 		cout << "GLTextureManager: Using OpenGL 1.3 or higher" << endl;
 		return new GLTextureManager();
-	} else if (GLEW_ARB_multitexture) {
+	} 
+	else if (GLEW_ARB_multitexture) 
+	{
 		// TODO: add ARB fallback
-		cerr << "GLTextureManager: Falling back to ARB (not implemented!)" << endl;
+		cerr << "GLTextureManager: Falling back to ARB (not implemented!)" 
+			<< endl;
 		return 0;
-	} else {
+	} 
+	else 
+	{
 		cerr << "GLTextureManager: Multitexturing not supported!" << endl;
 		return 0;
 	}
 }
 
-GLTextureManager::GLTextureManager() { 
+// ----------------------------------------------------------------------------
+GLTextureManager::GLTextureManager() 
+{ 
 	cout << "GLTextureManager: Constructor" << endl;
 	// Initialize inuse vector
-	for (unsigned int i = 0; i < GL_MAX_TEXTURE_UNITS; ++i) {
+	for (unsigned int i = 0; i < GL_MAX_TEXTURE_UNITS; ++i) 
+	{
 		inuse.push_back(false);
+		assignments.push_back(0);
 	}
 }
 
-GLTextureManager::~GLTextureManager() { 
+// ----------------------------------------------------------------------------
+GLTextureManager::~GLTextureManager() 
+{ 
 	cout << "GLTextureManager: Destructor" << endl;
 	// Delete all textures
-	map<string, GLTexture*>::iterator i = textures.begin();
-	while (i != textures.end()) {
+	map<string, GLManagedTexture*>::iterator i = textures.begin();
+	while (i != textures.end()) 
+	{
 		const string name = i->first;
-		GLTexture *tex = i->second;
+		GLManagedTexture *mtex = i->second;
 		++i;
-		if (tex) {
+		if (mtex->texture) 
+		{
 			DeleteTexture(name);
-		} else {
+		} 
+		else 
+		{
 			RemoveTexture(name);
 		}
 	}
 }
 
-bool GLTextureManager::AddTexture(const string &name, GLTexture *tex) {
-	// Find the first free slot (linear search)
-	unsigned int i = 0;
-	while (i < GL_MAX_TEXTURE_UNITS) {
-		if (!inuse[i]) break;
-		++i;
-	}
-	// Any free texture units?
-	if (i == GL_MAX_TEXTURE_UNITS) {
-		cerr << "GLTextureManager: Error adding texture '" << name << "', no free texture units" << endl;
-		return false;
-	}
-	// Ok, store info
-	//cout << "GLTextureManager: Adding texture '" << name << "', unit " << i << endl;
-	textures[name] = tex;
-	texunits[name] = i;
-	texnames[i] = name;
-	inuse[i] = true;
+// ----------------------------------------------------------------------------
+bool GLTextureManager::AddTexture(const string &name, GLTexture *tex) 
+{
+	// Create a wrapper
+	GLManagedTexture *mtex = new GLManagedTexture(name, tex);
+	// Add the texture to the list
+	textures[name] = mtex;
 
 	return true;
 }
 
-bool GLTextureManager::AddReservedSlot(const string &name, unsigned int slot) {
+// ----------------------------------------------------------------------------
+bool GLTextureManager::AddReservedSlot(const string &name, unsigned int slot) 
+{
+	assert(0 <= slot && slot < GL_MAX_TEXTURE_UNITS);
+
 	// Is this slot currently free?
-	if (inuse[slot]) {
-		// Fetch the name for the texture currently in this slot
-		string name2 = texnames[slot];
-		if (!textures[name2]) {
-			cerr << "GLTextureManager: Error adding reserved slot '" << name << 
-				"', slot " << slot << " is already reserved as '" << name2 << "'" << endl;
-			return false;
-		}
-		// Try to move the texture out of the way
-		if (!AddTexture(name2, textures[name2])) {
-			return false;
-		}
+	if (inuse[slot]) 
+	{
+		cerr << "GLTextureManager: Error adding reserved slot '" 
+			<< name << "', slot already in use." << endl;
+		return false;
 	}
-	// Reserve the slot
-	textures[name] = 0;
-	texunits[name] = slot;
-	texnames[slot] = name;
+		
+	// Create a wrapper and reserve the slot
+	GLManagedTexture *mtex = new GLManagedTexture(name, 0);
+	mtex->slot = slot;
+	textures[name] = mtex;
+	assignments[slot] = mtex;
 	inuse[slot] = true;
 
 	return true;
 }
 
-GLTexture *GLTextureManager::GetTexture(const string &name) {
+// ----------------------------------------------------------------------------
+GLTexture *GLTextureManager::GetTexture(const string &name) 
+{
 	// Do we know this texture?
-	if (textures.find(name) == textures.end()) {
-		cerr << "GLTextureManager: Error getting texture '" << name << "', texture not found" << endl;
+	if (textures.find(name) == textures.end()) 
+	{
+		cerr << "GLTextureManager: Error getting texture '" 
+			<< name << "', texture not found" << endl;
 		return 0;
 	}
 	// Reserved slots will just return null here
-	return textures[name];
+	return textures[name]->texture;
 }
 
-GLTexture *GLTextureManager::RemoveTexture(const string &name) {
+// ----------------------------------------------------------------------------
+GLTexture *GLTextureManager::RemoveTexture(const string &name) 
+{
 	// Do we know this texture?
-	if (textures.find(name) == textures.end()) {
-		cerr << "GLTextureManager: Error removing texture '" << name << "', texture not found" << endl;
+	if (textures.find(name) == textures.end()) 
+	{
+		cerr << "GLTextureManager: Error removing texture '" 
+			<< name << "', texture not found" << endl;
 		return 0;
 	}
-	int unit = texunits[name];
-	GLTexture *tex = textures[name];
-	// Don't unbind reserved slots
-	if (tex) {
-		//cout << "GLTextureManager: Removing texture '" << name << "', unit " << unit << endl;
-		// Unbind the texture
-		glActiveTexture(GL_TEXTURE0 + unit);
-		tex->UnbindCurrent();
+	GLManagedTexture *mtex = textures[name];
+	GLTexture *tex = mtex->texture;
+	int slot = mtex->slot;
+	// Don't unbind unassigned textures
+	if (slot >= 0) 
+	{
+		// Don't unbind reserved slots
+		if (tex)
+		{
+			// Unbind the texture
+			glActiveTexture(GL_TEXTURE0 + slot);
+			tex->UnbindCurrent();
+		}
+		// Free the slot
+		assignments[slot] = 0;
+		inuse[slot] = false;
 	}
 	// Now forget about the thing
-	inuse[unit] = false;
-	texnames.erase(unit);
-	texunits.erase(name);
 	textures.erase(name);
+	delete mtex;
 	// Release texture to caller
 	return tex;
 }
 
-void GLTextureManager::DeleteTexture(const string &name) {
+// ----------------------------------------------------------------------------
+void GLTextureManager::DeleteTexture(const string &name) 
+{
 	GLTexture *tex = RemoveTexture(name);
-	if (tex) {
-		cout << "GLTextureManager: Deleting texture '" << name << "'" << endl;
+	if (tex) 
+	{
+		//cout << "GLTextureManager: Deleting texture '" 
+		//	<< name << "'" << endl;
 		delete tex;
-	} else {
-		cerr << "GLTextureManager: Will not delete reserved slot '" << name << "'" << endl;
+	} 
+}
+
+// ----------------------------------------------------------------------------
+// Reset all assignments, except reserved slots
+void GLTextureManager::BeginNewPass()
+{
+	for (unsigned int slot = 0; slot < GL_MAX_TEXTURE_UNITS; ++slot) 
+	{
+		GLManagedTexture *mtex = assignments[slot];
+		// Ignore unused slots
+		if (inuse[slot])
+		{
+			assert(mtex);
+			// Leave the reserved slots in place until they are explicitly removed
+			if (mtex->texture)
+			{
+				inuse[slot] = false;
+				assignments[slot] = 0;
+				mtex->slot = -1;
+			}
+		}
 	}
 }
 
-void GLTextureManager::Bind() {
-	for (map<string, GLTexture*>::iterator i = textures.begin(); i != textures.end(); ++i) {
-		// Get info
-		const string &name = i->first;
-		GLTexture *tex = i->second;
-		int unit = texunits[name];
-		// Don't touch the reserved texture units
-		if (tex) {
-			//cout << "GLTextureManager: Binding texture '" << name << "' to unit " << unit << endl;
-			// Set up texture in OpenGL
-			glActiveTexture(GL_TEXTURE0 + unit);
-			tex->BindToCurrent();
+// ----------------------------------------------------------------------------
+// Bind all textures which have been assigned a slot
+void GLTextureManager::Bind() 
+{
+	for (unsigned int slot = 0; slot < GL_MAX_TEXTURE_UNITS; ++slot) 
+	{
+		// Ignore unused slots
+		if (inuse[slot])
+		{
+			// Get info
+			GLManagedTexture *mtex = assignments[slot];
+			assert(mtex);
+			GLTexture *tex = mtex->texture;
+			// Don't touch the reserved texture units
+			if (tex) 
+			{
+				// Set up texture in OpenGL
+				glActiveTexture(GL_TEXTURE0 + slot);
+				tex->BindToCurrent();
+			}
 		}
 	}
 	glActiveTexture(GL_TEXTURE0);
 }
 
-void GLTextureManager::Unbind() {
-	for (map<string, GLTexture*>::iterator i = textures.begin(); i != textures.end(); ++i) {
-		// Get info
-		const string &name = i->first;
-		GLTexture *tex = i->second;
-		int unit = texunits[name];
-		// Don't touch the reserved texture units
-		if (tex) {
-			//cout << "GLTextureManager: Unbinding unit " << unit << "(was texture '" << name << "')" << endl;
-			// Unbind the texture
-			glActiveTexture(GL_TEXTURE0 + unit);
-			tex->UnbindCurrent();
+// ----------------------------------------------------------------------------
+void GLTextureManager::Unbind() 
+{
+	for (unsigned int slot = 0; slot < GL_MAX_TEXTURE_UNITS; ++slot) 
+	{
+		// Ignore unused slots
+		if (inuse[slot])
+		{
+			// Get info
+			GLManagedTexture *mtex = assignments[slot];
+			assert(mtex);
+			GLTexture *tex = mtex->texture;
+			// Don't touch the reserved texture units
+			if (tex) 
+			{
+				// Unbind the texture
+				glActiveTexture(GL_TEXTURE0 + slot);
+				tex->UnbindCurrent();
+			}
 		}
 	}
 	glActiveTexture(GL_TEXTURE0);
 }
 
-void GLTextureManager::SetupProgram(GLProgram &prog) {
-	for (map<string, int>::iterator i = texunits.begin(); i != texunits.end(); ++i) {
-		bool res = prog.UseTexture(i->first, i->second);
-		if (res) {
-			//cout << "GLTextureManager: Found texture variable '" << i->first << "' in program" << endl;
-		} else {
-			//cerr << "GLTextureManager: Texture variable '" << i->first << "' not found in program" << endl;
-		}
+// ----------------------------------------------------------------------------
+bool GLTextureManager::SetupProgram(GLProgram &prog) 
+{
+	// Find the first free texture unit, if any
+	int firstfree = 0;
+	while (firstfree < GL_MAX_TEXTURE_UNITS)
+	{
+		if (!inuse[firstfree]) break;
+		++firstfree;
 	}
+	if (firstfree == GL_MAX_TEXTURE_UNITS)
+	{
+		// No free texture units
+		firstfree = -1;
+	}
+
+	// Iterate over all our textures
+	for (map<string, GLManagedTexture*>::iterator i = textures.begin(); 
+		i != textures.end(); ++i) 
+	{
+		// Get info
+		string name = i->first;
+		GLManagedTexture *mtex = i->second;
+		
+		// Does this texture already have a slot?
+		int slot = mtex->slot;
+		if (slot < 0)
+		{
+			slot = firstfree;
+		}
+
+		// Does the program need the texture?
+		if (prog.UseTexture(name, (slot >= 0 ? slot : 0)))
+		{
+			// Texture was used by program
+			if (slot < 0) {
+				// Oops, the slot wasn't valid
+				cerr << "GLTextureManager: Error setting up program, " 
+					<< "no free slots for texture '" << name << "'" << endl;
+				return false;
+			}
+
+			// Store slot assignment
+			mtex->slot = slot;
+			assignments[slot] = mtex;
+			inuse[slot] = true;
+
+			// Find next free slot, if any
+			while (firstfree < GL_MAX_TEXTURE_UNITS && firstfree >= 0)
+			{
+				if (!inuse[firstfree]) break;
+				++firstfree;
+			}
+			if (firstfree == GL_MAX_TEXTURE_UNITS)
+			{
+				// No free texture units
+				firstfree = -1;
+			}
+		} 
+	}
+
+	return true;
 }

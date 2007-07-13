@@ -22,11 +22,11 @@ GLTextureRectangle *GLTextureRectangle::New(int width, int height, int internalf
 
 GLTextureRectangle::GLTextureRectangle(int width, int height, int internalformat)
 : GLTexture(width, height, internalformat) { 
-	cout << "GLTextureRectangle: Constructor" << endl;
+	//cout << "GLTextureRectangle: Constructor" << endl;
 }
 
 GLTextureRectangle::~GLTextureRectangle() { 
-	cout << "GLTextureRectangle: Destructor" << endl;
+	//cout << "GLTextureRectangle: Destructor" << endl;
 }
 
 void GLTextureRectangle::BindToCurrent() {
