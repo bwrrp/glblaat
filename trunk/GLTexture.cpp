@@ -47,14 +47,14 @@ GLTexture *GLTexture::New(int width, int height, int internalformat, int format,
 
 GLTexture::GLTexture(int width, int height, int internalformat)
 : id(0), width(width), height(height), internalformat(internalformat) {
-	cout << "GLTexture: Constructor" << endl;
+	//cout << "GLTexture: Constructor" << endl;
 	// Create the texture object
 	glGenTextures(1, &id);
 	GLUtility::CheckOpenGLError("GLTexture: glGenTextures()");
 }
 
 GLTexture::~GLTexture() {
-	cout << "GLTexture: Destructor" << endl;
+	//cout << "GLTexture: Destructor" << endl;
 	// Delete the texture object
 	glDeleteTextures(1, &id);
 	GLUtility::CheckOpenGLError("GLTexture: glDeleteTextures()");
