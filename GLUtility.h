@@ -8,8 +8,10 @@ public:
 	~GLUtility();
 
 	// Buffer copying
-	static GLTextureRectangle *GrabColorBuffer(int vpx, int vpy, int vpwidth, int vpheight);
-	static GLTextureRectangle *GrabDepthBuffer(int vpx, int vpy, int vpwidth, int vpheight);
+	static GLTextureRectangle *GrabColorBuffer(int vpx, int vpy, 
+		int vpwidth, int vpheight, GLTextureRectangle *oldtex = 0);
+	static GLTextureRectangle *GrabDepthBuffer(int vpx, int vpy, 
+		int vpwidth, int vpheight, GLTextureRectangle *oldtex = 0);
 
 	// Error handling
 	static void CheckOpenGLError(const std::string &task = "");
