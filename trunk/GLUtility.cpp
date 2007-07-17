@@ -14,44 +14,51 @@ GLUtility::~GLUtility() { }
 
 // ----------------------------------------------------------------------------
 GLTextureRectangle *GLUtility::GrabColorBuffer(int vpx, int vpy, 
-													  int vpwidth, int vpheight) 
+											   int vpwidth, int vpheight, 
+											   GLTextureRectangle *oldtex) 
 {
-	GLUtility::CheckOpenGLError("GLUtility: GrabColorBuffer entry");
-	// Create the texture
-	// TODO: add support for using cached texture
-	GLTextureRectangle *tex = GLTextureRectangle::New(
-		vpwidth, vpheight, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	// Can we use an existing texture?
+	GLTextureRectangle *tex = oldtex;
+	assert(tex->GetHeight() == vpheight && tex->GetWidth() == vpwidth);
+
 	if (!tex)
 	{
-		cerr << "GLUtility: GrabColorBuffer failed to create texture!" << endl;
-		return tex;
+		// Create the texture
+		tex = GLTextureRectangle::New(vpwidth, vpheight, 
+			GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+		if (!tex)
+		{
+			cerr << "GLUtility: GrabColorBuffer failed to create texture!" << endl;
+			return tex;
+		}
+		// Set texture parameters
+		tex->BindToCurrent();
+		glTexParameteri(tex->GetTextureTarget(), 
+			GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(tex->GetTextureTarget(), 
+			GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	}
-	GLUtility::CheckOpenGLError("GLUtility: GrabColorBuffer create texture");
-
-	// Set texture parameters
-	tex->BindToCurrent();
-	glTexParameteri(tex->GetTextureTarget(), 
-		GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(tex->GetTextureTarget(), 
-		GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	GLUtility::CheckOpenGLError("GLUtility: GrabColorBuffer set texture parameters");
+	else
+	{
+		tex->BindToCurrent();
+	}
+	
 
 	// Capture RGBA buffer
 	glCopyTexSubImage2D(tex->GetTextureTarget(), 0, 0, 0, 
 		vpx, vpy, vpwidth, vpheight);
-	GLUtility::CheckOpenGLError("GLUtility: GrabColorBuffer copy image");
 
 	// Done
 	tex->UnbindCurrent();
-	GLUtility::CheckOpenGLError("GLUtility: GrabColorBuffer exit");
+	GLUtility::CheckOpenGLError("GLUtility: GrabColorBuffer");
 	return tex;
 }
 
 // ----------------------------------------------------------------------------
 GLTextureRectangle *GLUtility::GrabDepthBuffer(int vpx, int vpy, 
-													  int vpwidth, int vpheight) 
+											   int vpwidth, int vpheight, 
+											   GLTextureRectangle *oldtex) 
 {
-	GLUtility::CheckOpenGLError("GLUtility: GrabDepthBuffer entry");
 	// get z bits
 	GLint depthBits;
 	GLint depthformat;
@@ -64,43 +71,47 @@ GLTextureRectangle *GLUtility::GrabDepthBuffer(int vpx, int vpy,
 	{
 		depthformat = GL_DEPTH_COMPONENT24;
 	}
-	GLUtility::CheckOpenGLError("GLUtility: GrabDepthBuffer get z bits");
 
-	// Create the texture
-	// TODO: add support for using cached texture
-	GLTextureRectangle *tex = GLTextureRectangle::New(vpwidth, vpheight, 
-		depthformat, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);
-	if (!tex) 
+	// Can we use an existing texture?
+	GLTextureRectangle *tex = oldtex;
+	assert(tex->GetHeight() == vpheight && tex->GetWidth() == vpwidth);
+
+	if (!tex)
 	{
-		cerr << "GLUtility: GrabDepthBuffer failed to create texture!" << endl;
-		return tex;
+		tex = GLTextureRectangle::New(vpwidth, vpheight, 
+			depthformat, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);
+		if (!tex) 
+		{
+			cerr << "GLUtility: GrabDepthBuffer failed to create texture!" << endl;
+			return tex;
+		}
+		// Set texture parameters
+		tex->BindToCurrent();
+		glTexParameteri(tex->GetTextureTarget(), 
+			GL_TEXTURE_MIN_FILTER,	GL_NEAREST);
+		glTexParameteri(tex->GetTextureTarget(), 
+			GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(tex->GetTextureTarget(), 
+			GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(tex->GetTextureTarget(), 
+			GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(tex->GetTextureTarget(), 
+			GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+		glTexParameteri(tex->GetTextureTarget(), 
+			GL_TEXTURE_COMPARE_FUNC, GL_LESS);
 	}
-	GLUtility::CheckOpenGLError("GLUtility: GrabDepthBuffer create texture");
-
-	// Set texture parameters
-	tex->BindToCurrent();
-	glTexParameteri(tex->GetTextureTarget(), 
-		GL_TEXTURE_MIN_FILTER,	GL_NEAREST);
-	glTexParameteri(tex->GetTextureTarget(), 
-		GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(tex->GetTextureTarget(), 
-		GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(tex->GetTextureTarget(), 
-		GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(tex->GetTextureTarget(), 
-		GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-	glTexParameteri(tex->GetTextureTarget(), 
-		GL_TEXTURE_COMPARE_FUNC, GL_LESS);
-	GLUtility::CheckOpenGLError("GLUtility: GrabDepthBuffer set texture parameters");
+	else
+	{
+		tex->BindToCurrent();
+	}
 	
 	// Capture depth buffer
 	glCopyTexSubImage2D(tex->GetTextureTarget(), 0, 0, 0, 
 		vpx, vpy, vpwidth, vpheight);
-	GLUtility::CheckOpenGLError("GLUtility: GrabDepthBuffer copy image");
 
 	// Done
 	tex->UnbindCurrent();
-	GLUtility::CheckOpenGLError("GLUtility: GrabDepthBuffer exit");
+	GLUtility::CheckOpenGLError("GLUtility: GrabDepthBuffer");
 	return tex;
 }
 
