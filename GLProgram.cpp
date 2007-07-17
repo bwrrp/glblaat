@@ -26,13 +26,13 @@ GLProgram *GLProgram::New() {
 
 GLProgram::GLProgram() 
 : inuse(false) {
-	cout << "GLProgram: Constructor" << endl;
+	//cout << "GLProgram: Constructor" << endl;
 	id = glCreateProgram();
 	GLUtility::CheckOpenGLError("GLProgram: glCreateProgram()");
 }
 
 GLProgram::~GLProgram() {
-	cout << "GLProgram: Destructor" << endl;
+	//cout << "GLProgram: Destructor" << endl;
 	for (set<GLShader*>::iterator i = shaders.begin(); i != shaders.end();) {
 		// Grab shader reference
 		GLShader *shader = *i;
@@ -78,14 +78,14 @@ void GLProgram::AttachShader(GLShader &shader) {
 	glAttachShader(id, shader.id);
 	GLUtility::CheckOpenGLError("GLProgram: AttachShader()");
 	shaders.insert(&shader);
-	cout << "GLProgram: Attached shader" << endl;
+	//cout << "GLProgram: Attached shader" << endl;
 }
 
 void GLProgram::DetachShader(GLShader &shader) {
 	glDetachShader(id, shader.id);
 	GLUtility::CheckOpenGLError("GLProgram: DetachShader()");
 	shaders.erase(&shader);
-	cout << "GLProgram: Detached vertex shader" << endl;
+	//cout << "GLProgram: Detached shader" << endl;
 }
 
 bool GLProgram::Link() {
