@@ -1,7 +1,8 @@
 #pragma once
+#include "GLResource.h"
 #include "GL.h"
 
-class GLTexture {
+class GLTexture : public GLResource {
 public:
 	friend class GLRenderTexture2D;
 

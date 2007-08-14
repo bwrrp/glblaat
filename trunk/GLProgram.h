@@ -1,11 +1,12 @@
 #pragma once
+#include "GLResource.h"
 #include "GL.h"
 #include <string>
 #include <set>
 
 class GLShader;
 
-class GLProgram {
+class GLProgram : public GLResource {
 public:
 	static GLProgram *New();
 	~GLProgram();
