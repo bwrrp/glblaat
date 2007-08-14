@@ -1,7 +1,8 @@
 #pragma once
+#include "GLResource.h"
 #include "GL.h"
 
-class GLRendertarget {
+class GLRendertarget : public GLResource {
 public:
 	friend class GLFramebuffer;
 

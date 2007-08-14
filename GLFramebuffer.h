@@ -1,10 +1,11 @@
 #pragma once
+#include "GLResource.h"
 #include "GL.h"
 #include "GLRendertarget.h"
 #include "GLTexture.h"
 #include <map>
 
-class GLFramebuffer {
+class GLFramebuffer : public GLResource {
 public:
 	static GLFramebuffer *New(int width, int height);
 	~GLFramebuffer();

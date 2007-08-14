@@ -1,9 +1,10 @@
 #pragma once
+#include "GLResource.h"
 #include "GLProgram.h"
 #include "GL.h"
 #include <string>
 
-class GLShader {
+class GLShader : public GLResource {
 public:
 	friend class GLProgram;
 
