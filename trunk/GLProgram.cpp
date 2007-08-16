@@ -55,6 +55,8 @@ bool GLProgram::AddVertexShader(const string &source) {
 	if (!shader->SetSource(source)) {
 		cerr << "GLProgram: Error compiling vertex shader, dumping infolog..." << endl;
 		cerr << shader->GetInfoLog() << endl;
+		cerr << "GLProgram: Vertex shader source:" << endl;
+		cerr << shader->GetSource() << endl;
 		return false;
 	}
 
@@ -67,6 +69,8 @@ bool GLProgram::AddFragmentShader(const string &source) {
 	if (!shader->SetSource(source)) {
 		cerr << "GLProgram: Error compiling fragment shader, dumping infolog..." << endl;
 		cerr << shader->GetInfoLog() << endl;
+		cerr << "GLProgram: Fragment shader source:" << endl;
+		cerr << shader->GetSource() << endl;
 		return false;
 	}
 
