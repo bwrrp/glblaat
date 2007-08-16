@@ -135,7 +135,7 @@ void GLUtility::CheckOpenGLError(const std::string &task)
 		if (i == 10) {
 			// This should not happen, but apparently it does
 			// glGetError should return 0 if it generates an error itself
-			cerr << "GLUtility: 10 consecutive errors reached, are you misssing a glEnd()?";
+			cerr << "GLUtility: 10 consecutive errors reached, are you missing a glEnd()?";
 		}
 	}
 }
