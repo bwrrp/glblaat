@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 
+class GLTexture;
 class GLTextureRectangle;
 
 class GLUtility {
@@ -8,9 +9,13 @@ public:
 	~GLUtility();
 
 	// Buffer copying
-	static GLTextureRectangle *GrabColorBuffer(int vpx, int vpy, 
+	static GLTexture *GrabColorBuffer(int vpx, int vpy, 
+		int vpwidth, int vpheight, GLTexture *oldtex = 0);
+	static GLTextureRectangle *GrabColorBufferRectangle(int vpx, int vpy, 
 		int vpwidth, int vpheight, GLTextureRectangle *oldtex = 0);
-	static GLTextureRectangle *GrabDepthBuffer(int vpx, int vpy, 
+	static GLTexture *GrabDepthBuffer(int vpx, int vpy, 
+		int vpwidth, int vpheight, GLTexture *oldtex = 0);
+	static GLTextureRectangle *GrabDepthBufferRectangle(int vpx, int vpy, 
 		int vpwidth, int vpheight, GLTextureRectangle *oldtex = 0);
 
 	// Error handling
@@ -20,6 +25,9 @@ public:
 
 private:
 	GLUtility(); // Class can not be instantiated
+
+	static void SetDefaultColorTextureParameters(GLTexture *tex);
+	static void SetDefaultDepthTextureParameters(GLTexture *tex);
 
 	static bool ErrorFlag;
 };
