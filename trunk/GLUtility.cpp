@@ -180,6 +180,34 @@ GLTextureRectangle *GLUtility::GrabDepthBufferRectangle(int vpx, int vpy,
 }
 
 // ----------------------------------------------------------------------------
+void GLUtility::SetDefaultColorTextureParameters(GLTexture *tex)
+{
+	tex->BindToCurrent();
+	glTexParameteri(tex->GetTextureTarget(), 
+		GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(tex->GetTextureTarget(), 
+		GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+}
+
+// ----------------------------------------------------------------------------
+void GLUtility::SetDefaultDepthTextureParameters(GLTexture *tex)
+{
+	tex->BindToCurrent();
+	glTexParameteri(tex->GetTextureTarget(), 
+		GL_TEXTURE_MIN_FILTER,	GL_NEAREST);
+	glTexParameteri(tex->GetTextureTarget(), 
+		GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(tex->GetTextureTarget(), 
+		GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(tex->GetTextureTarget(), 
+		GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(tex->GetTextureTarget(), 
+		GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+	glTexParameteri(tex->GetTextureTarget(), 
+		GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+}
+
+// ----------------------------------------------------------------------------
 bool GLUtility::ErrorFlag = false;
 
 // ----------------------------------------------------------------------------
@@ -227,32 +255,4 @@ void GLUtility::ClearOpenGLError()
 bool GLUtility::GetErrorFlag() 
 {
 	return ErrorFlag;
-}
-
-// ----------------------------------------------------------------------------
-void GLUtility::SetDefaultColorTextureParameters(GLTexture *tex)
-{
-	tex->BindToCurrent();
-	glTexParameteri(tex->GetTextureTarget(), 
-		GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(tex->GetTextureTarget(), 
-		GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-}
-
-// ----------------------------------------------------------------------------
-void GLUtility::SetDefaultDepthTextureParameters(GLTexture *tex)
-{
-	tex->BindToCurrent();
-	glTexParameteri(tex->GetTextureTarget(), 
-		GL_TEXTURE_MIN_FILTER,	GL_NEAREST);
-	glTexParameteri(tex->GetTextureTarget(), 
-		GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(tex->GetTextureTarget(), 
-		GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(tex->GetTextureTarget(), 
-		GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(tex->GetTextureTarget(), 
-		GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-	glTexParameteri(tex->GetTextureTarget(), 
-		GL_TEXTURE_COMPARE_FUNC, GL_LESS);
 }
