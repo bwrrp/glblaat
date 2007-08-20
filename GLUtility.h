@@ -18,6 +18,10 @@ public:
 	static GLTextureRectangle *GrabDepthBufferRectangle(int vpx, int vpy, 
 		int vpwidth, int vpheight, GLTextureRectangle *oldtex = 0);
 
+	// Default parameters for grab textures
+	static void SetDefaultColorTextureParameters(GLTexture *tex);
+	static void SetDefaultDepthTextureParameters(GLTexture *tex);
+
 	// Error handling
 	static void CheckOpenGLError(const std::string &task = "");
 	static void ClearOpenGLError();
@@ -25,9 +29,6 @@ public:
 
 private:
 	GLUtility(); // Class can not be instantiated
-
-	static void SetDefaultColorTextureParameters(GLTexture *tex);
-	static void SetDefaultDepthTextureParameters(GLTexture *tex);
 
 	static bool ErrorFlag;
 };
