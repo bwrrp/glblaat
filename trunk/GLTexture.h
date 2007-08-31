@@ -18,6 +18,7 @@ public:
 
 	inline int GetWidth() { return width; }
 	inline int GetHeight() { return height; }
+	inline int GetInternalFormat() { return internalformat; }
 
 protected:
 	GLuint id;
