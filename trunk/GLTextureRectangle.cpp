@@ -6,7 +6,8 @@
 using namespace std;
 
 GLTextureRectangle *GLTextureRectangle::New(
-	int width, int height, int internalformat, int format, int type, void *data) 
+	int width, int height, int internalformat, 
+	int format, int type, void *data) 
 {
 	// Check if rectangular textures are supported
 	if (GLEW_ARB_texture_rectangle) 

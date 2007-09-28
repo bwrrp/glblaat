@@ -35,7 +35,7 @@ public:
 
 	bool Resize(int width, int height);
 
-private:
+protected:
 	GLFramebuffer(int width, int height);
 	GLuint id;
 	std::map<int, GLRendertarget*> attachments;
@@ -44,4 +44,9 @@ private:
 	int height;
 
 	bool bound;
+
+private:
+	// Not implemented
+	GLFramebuffer(const GLFramebuffer&);
+	void operator=(const GLFramebuffer&);
 };

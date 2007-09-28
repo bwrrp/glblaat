@@ -21,4 +21,9 @@ protected:
 	virtual void AttachToBoundFBO(int attachment);
 
 	virtual bool Allocate(int internalformat, int format, int type);
+	
+private:
+	// Not implemented
+	GLRenderTexture2D(const GLRenderTexture2D&);
+	void operator=(const GLRenderTexture2D&);
 };

@@ -11,4 +11,9 @@ protected:
 	GLRenderTexture2DRectangle(int width, int height);
 
 	virtual bool Allocate(int internalformat, int format, int type);
+
+private:
+	// Not implemented
+	GLRenderTexture2DRectangle(const GLRenderTexture2DRectangle&);
+	void operator=(const GLRenderTexture2DRectangle&);
 };

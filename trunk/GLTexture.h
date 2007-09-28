@@ -36,4 +36,9 @@ protected:
 	GLTexture(int width, int height, int internalformat);
 
 	virtual bool Allocate(int format, int type, void *data);
+
+private:
+	// Not implemented
+	GLTexture(const GLTexture&);
+	void operator=(const GLTexture&);
 };

@@ -4,7 +4,8 @@
 class GLTexture;
 class GLTextureRectangle;
 
-class GLUtility {
+class GLUtility 
+{
 public:
 	~GLUtility();
 

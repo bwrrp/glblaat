@@ -19,4 +19,9 @@ protected:
 	virtual void AttachToBoundFBO(int attachment);
 
 	virtual void Allocate();
+
+private:
+	// Not implemented
+	GLRenderbuffer(const GLRenderbuffer&);
+	void operator=(const GLRenderbuffer&);
 };
