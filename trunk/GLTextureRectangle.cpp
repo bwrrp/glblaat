@@ -5,44 +5,47 @@
 
 using namespace std;
 
-GLTextureRectangle *GLTextureRectangle::New(int width, int height, int internalformat, int format, int type, void *data) {
+GLTextureRectangle *GLTextureRectangle::New(
+	int width, int height, int internalformat, int format, int type, void *data) 
+{
 	// Check if rectangular textures are supported
-	if (GLEW_ARB_texture_rectangle) {
+	if (GLEW_ARB_texture_rectangle) 
+	{
 		GLTextureRectangle *tex = new GLTextureRectangle(width, height, internalformat);
-		if (!tex->Allocate(format, type, data)) {
+		if (!tex->Allocate(format, type, data)) 
+		{
 			delete tex;
 			return 0;
 		}
 		return tex;
-	} else {
+	} 
+	else 
+	{
 		cerr << "GLTextureRectangle: rectangular textures not supported" << endl;
 		return 0;
 	}
 }
 
 GLTextureRectangle::GLTextureRectangle(int width, int height, int internalformat)
-: GLTexture(width, height, internalformat) { 
+: GLTexture(width, height, internalformat) 
+{ 
 	//cout << "GLTextureRectangle: Constructor" << endl;
 }
 
-GLTextureRectangle::~GLTextureRectangle() { 
+GLTextureRectangle::~GLTextureRectangle() 
+{ 
 	//cout << "GLTextureRectangle: Destructor" << endl;
 }
 
-void GLTextureRectangle::BindToCurrent() {
-	glBindTexture(GL_TEXTURE_RECTANGLE_ARB, id);
-	GLUtility::CheckOpenGLError("GLTextureRectangle: BindToCurrent()");
-}
-
-void GLTextureRectangle::UnbindCurrent() {
-	glBindTexture(GL_TEXTURE_RECTANGLE_ARB, 0);
-	GLUtility::CheckOpenGLError("GLTextureRectangle: UnbindCurrent()");
-}
-
-bool GLTextureRectangle::Allocate(int format, int type, void *data) {
+bool GLTextureRectangle::Allocate(int format, int type, void *data) 
+{
 	cout << "GLTextureRectangle: Allocate" << endl;
 	// Store old binding to avoid messing up the state
 	glPushAttrib(GL_TEXTURE_BIT);
+
+	// Store new params
+	this->dataformat = format;
+	this->datatype = type;
 
 	BindToCurrent();
 
@@ -60,7 +63,8 @@ bool GLTextureRectangle::Allocate(int format, int type, void *data) {
 	GLint w;
 	glGetTexLevelParameteriv(GL_PROXY_TEXTURE_RECTANGLE_ARB, 0, GL_TEXTURE_WIDTH, &w);
 	GLUtility::CheckOpenGLError("GLTextureRectangle: Allocate() - getting width from proxy");
-	if (w == 0) {
+	if (w == 0) 
+	{
 		cerr << "GLTextureRectangle: Proxy allocation failed, may be out of video memory" << endl;
 		UnbindCurrent();
 		glPopAttrib();
@@ -75,7 +79,8 @@ bool GLTextureRectangle::Allocate(int format, int type, void *data) {
 	UnbindCurrent();
 	glPopAttrib();
 
-	if (GLUtility::GetErrorFlag()) {
+	if (GLUtility::GetErrorFlag()) 
+	{
 		cerr << "GLTextureRectangle: An OpenGL error occurred while allocating the texture" << endl;
 		GLUtility::ClearOpenGLError();
 		return false;
