@@ -7,9 +7,6 @@ public:
 
 	~GLTextureRectangle();
 
-	void BindToCurrent();
-	void UnbindCurrent();
-
 	inline GLenum GetTextureTarget() { return GL_TEXTURE_RECTANGLE_ARB; }
 
 protected:

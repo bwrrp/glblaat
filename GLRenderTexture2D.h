@@ -11,11 +11,14 @@ public:
 
 	virtual GLTexture* GetTexture();
 
+	virtual bool Resize(int width, int height);
+
 protected:
 	GLTexture *tex;
 
 	GLRenderTexture2D(int width, int height);
 
 	virtual void AttachToBoundFBO(int attachment);
+
 	virtual bool Allocate(int internalformat, int format, int type);
 };

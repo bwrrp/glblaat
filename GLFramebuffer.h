@@ -5,12 +5,13 @@
 #include "GLTexture.h"
 #include <map>
 
-class GLFramebuffer : public GLResource {
+class GLFramebuffer : public GLResource 
+{
 public:
 	static GLFramebuffer *New(int width, int height);
 	~GLFramebuffer();
 
-	void AttachRendertarget(int attachment, GLRendertarget &rt);
+	GLRendertarget *AttachRendertarget(int attachment, GLRendertarget &rt);
 	GLRendertarget *DetachRendertarget(int attachment);
 
 	bool CreateDepthBuffer(int format = GL_DEPTH_COMPONENT);
@@ -31,6 +32,8 @@ public:
 	inline int GetHeight() { return height; }
 
 	GLTexture *GetTexture2D(int attachment);
+
+	bool Resize(int width, int height);
 
 private:
 	GLFramebuffer(int width, int height);
