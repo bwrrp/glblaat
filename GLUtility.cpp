@@ -9,9 +9,13 @@
 
 using namespace std;
 
-GLUtility::GLUtility() { }
+GLUtility::GLUtility() 
+{ 
+}
 
-GLUtility::~GLUtility() { }
+GLUtility::~GLUtility() 
+{ 
+}
 
 // ----------------------------------------------------------------------------
 GLTexture *GLUtility::GrabColorBuffer(int vpx, int vpy, 

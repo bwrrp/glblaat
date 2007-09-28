@@ -32,4 +32,9 @@ protected:
 	std::vector<bool> inuse;
 
 	GLTextureManager();
+
+private:
+	// Not implemented
+	GLTextureManager(const GLTextureManager&);
+	void operator=(const GLTextureManager&);
 };

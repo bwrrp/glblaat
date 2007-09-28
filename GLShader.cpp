@@ -5,21 +5,25 @@
 using namespace std;
 
 GLShader::GLShader(GLenum type) 
-: id(0), type(type) {
+: id(0), type(type) 
+{
 	id = glCreateShader(type);
 	GLUtility::CheckOpenGLError("GLShader: glCreateShader()");
 }
 
-GLShader::~GLShader() {
+GLShader::~GLShader() 
+{
 	glDeleteShader(id);
 	GLUtility::CheckOpenGLError("GLShader: glDeleteShader()");
 }
 
-string GLShader::GetSource() const {
+string GLShader::GetSource() const 
+{
 	return source;
 }
 
-bool GLShader::SetSource(const string &source) {
+bool GLShader::SetSource(const string &source) 
+{
 	this->source = source;
 
 	// Need a char** for glShaderSource
@@ -34,7 +38,8 @@ bool GLShader::SetSource(const string &source) {
 	return IsOk();
 }
 
-bool GLShader::IsOk() const {
+bool GLShader::IsOk() const 
+{
 	GLint ok = GL_FALSE;
 	glGetShaderiv(id, GL_COMPILE_STATUS, &ok);
 	GLUtility::CheckOpenGLError("GLShader: IsOk()");
@@ -42,13 +47,15 @@ bool GLShader::IsOk() const {
 	return (ok == GL_TRUE);
 }
 
-string GLShader::GetInfoLog() const {
+string GLShader::GetInfoLog() const 
+{
 	int loglength = 0;
 	
 	// Get the length of the log
 	glGetShaderiv(id, GL_INFO_LOG_LENGTH, &loglength);
 	GLUtility::CheckOpenGLError("GLShader: GetInfoLog - getting log length");
-	if (loglength > 0) {
+	if (loglength > 0) 
+	{
 		// Allocate a buffer and get the log
 		int dummy;
 		char *buffer = new char[loglength];
@@ -58,7 +65,9 @@ string GLShader::GetInfoLog() const {
 		delete[] buffer;
 
 		return infolog;
-	} else {
+	} 
+	else 
+	{
 		// No log...
 		return string("");
 	}

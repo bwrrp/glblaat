@@ -1,4 +1,4 @@
-#pragma once
+once
 #include "GLResource.h"
 #include "GL.h"
 
@@ -22,4 +22,9 @@ protected:
 
 	virtual void AttachToBoundFBO(int attachment);
 	virtual void DetachFromBoundFBO(int attachment);
+
+private:
+	// Not implemented
+	GLRendertarget(const GLRendertarget&);
+	void operator=(const GLRendertarget&);
 };

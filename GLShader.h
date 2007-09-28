@@ -4,7 +4,8 @@
 #include "GL.h"
 #include <string>
 
-class GLShader : public GLResource {
+class GLShader : public GLResource 
+{
 public:
 	friend class GLProgram;
 
@@ -18,11 +19,15 @@ public:
 	std::string GetInfoLog() const;
 
 protected:
-	GLShader(GLenum type);
-
-private:
 	GLuint id;
 	GLenum type;
 
 	std::string source;
+
+	GLShader(GLenum type);
+
+private:
+	// Not implemented
+	GLShader(const GLShader&);
+	void operator=(const GLShader&);
 };

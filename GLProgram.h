@@ -6,7 +6,8 @@
 
 class GLShader;
 
-class GLProgram : public GLResource {
+class GLProgram : public GLResource 
+{
 public:
 	static GLProgram *New();
 	~GLProgram();
@@ -36,7 +37,7 @@ public:
 
 	bool UseTexture(const std::string &name, int texunit);
 
-private:
+protected:
 	GLuint id;
 	std::set<GLShader*> shaders;
 	bool inuse;
@@ -45,4 +46,9 @@ private:
 
 	void AttachShader(GLShader &shader);
 	void DetachShader(GLShader &shader);
+
+private:
+	// Not implemented
+	GLProgram(const GLProgram&);
+	void operator=(const GLProgram&);
 };
