@@ -1,4 +1,4 @@
-once
+#pragma once
 #include "GLResource.h"
 #include "GL.h"
 
