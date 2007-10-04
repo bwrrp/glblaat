@@ -49,10 +49,10 @@ GLTexture *GLUtility::GrabColorBuffer(int vpx, int vpy,
 	// Capture RGBA buffer
 	glCopyTexSubImage2D(tex->GetTextureTarget(), 0, 0, 0, 
 		vpx, vpy, vpwidth, vpheight);
+	GLUtility::CheckOpenGLError("GLUtility: GrabColorBuffer");
 
 	// Done
 	tex->UnbindCurrent();
-	GLUtility::CheckOpenGLError("GLUtility: GrabColorBuffer");
 	return tex;
 }
 

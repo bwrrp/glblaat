@@ -40,7 +40,7 @@ GLTextureRectangle::~GLTextureRectangle()
 
 bool GLTextureRectangle::Allocate(int format, int type, void *data) 
 {
-	cout << "GLTextureRectangle: Allocate" << endl;
+	//cout << "GLTextureRectangle: Allocate" << endl;
 	// Store old binding to avoid messing up the state
 	glPushAttrib(GL_TEXTURE_BIT);
 

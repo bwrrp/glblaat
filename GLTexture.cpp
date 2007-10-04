@@ -88,7 +88,7 @@ void GLTexture::UnbindCurrent()
 
 bool GLTexture::Allocate(int format, int type, void *data) 
 {
-	cout << "GLTexture: Allocate" << endl;
+	//cout << "GLTexture: Allocate" << endl;
 	// Store old binding to avoid messing up the state
 	glPushAttrib(GL_TEXTURE_BIT);
 
