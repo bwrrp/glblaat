@@ -61,7 +61,9 @@ GLProgram::~GLProgram()
 
 bool GLProgram::AddVertexShader(const string &source) 
 {
-	GLShader *shader = new GLVertexShader();
+	GLShader *shader = GLVertexShader::New();
+	if (!shader) return false;
+
 	if (!shader->SetSource(source)) 
 	{
 		cerr << "GLProgram: Error compiling vertex shader, dumping infolog..." << endl;
@@ -77,7 +79,9 @@ bool GLProgram::AddVertexShader(const string &source)
 
 bool GLProgram::AddFragmentShader(const string &source) 
 {
-	GLShader *shader = new GLFragmentShader();
+	GLShader *shader = GLFragmentShader::New();
+	if (!shader) return false;
+
 	if (!shader->SetSource(source)) 
 	{
 		cerr << "GLProgram: Error compiling fragment shader, dumping infolog..." << endl;

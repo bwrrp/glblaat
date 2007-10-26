@@ -5,8 +5,11 @@
 class GLFragmentShader : public GLShader 
 {
 public:
-	GLFragmentShader();
+	static GLFragmentShader *New() { return new GLFragmentShader(); }
 	virtual ~GLFragmentShader();
+
+protected:
+	GLFragmentShader();
 
 private:
 	// Not implemented

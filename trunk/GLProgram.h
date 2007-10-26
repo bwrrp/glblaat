@@ -37,15 +37,16 @@ public:
 
 	bool UseTexture(const std::string &name, int texunit);
 
+	// Advanced use only
+	void AttachShader(GLShader &shader);
+	void DetachShader(GLShader &shader);
+
 protected:
 	GLuint id;
 	std::set<GLShader*> shaders;
 	bool inuse;
 
 	GLProgram();
-
-	void AttachShader(GLShader &shader);
-	void DetachShader(GLShader &shader);
 
 private:
 	// Not implemented
