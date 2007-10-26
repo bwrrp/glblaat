@@ -6,8 +6,11 @@
 class GLVertexShader : public GLShader 
 {
 public:
-	GLVertexShader();
+	static GLVertexShader *New() { return new GLVertexShader(); }
 	virtual ~GLVertexShader();
+
+protected:
+	GLVertexShader();
 
 private:
 	// Not implemented
