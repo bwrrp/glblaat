@@ -28,6 +28,7 @@ SET( ${ProjectName}_Texture_Classes
   GLTexture
   GLTextureRectangle
   GLTextureManager
+  GLTexture3D
 )
 
 # FBO framework
