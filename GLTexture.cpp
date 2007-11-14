@@ -103,16 +103,16 @@ bool GLTexture::Allocate(int format, int type, void *data)
 	glTexParameterf(GetTextureTarget(), GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 	glTexParameterf(GetTextureTarget(), GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
 	glTexParameterf(GetTextureTarget(), GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-	GLUtility::CheckOpenGLError("GLTexture: Allocate() - setting parameters");
 
 	// Try a proxy allocation to check available memory and parameters
 	glTexImage2D(GL_PROXY_TEXTURE_2D, 0, internalformat, 
 		width, height, 0, format, type, data);
-	GLUtility::CheckOpenGLError("GLTexture: Allocate() - proxy allocation");
 	GLint w;
 	glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &w);
-	GLUtility::CheckOpenGLError("GLTexture: Allocate() - getting width from proxy");
-	if (w == 0) 
+
+	GLUtility::CheckOpenGLError("GLTexture: Allocate() - proxy allocation");
+
+	if (w == 0 || GLUtility::GetErrorFlag()) 
 	{
 		cerr << "GLTexture: Proxy allocation failed, may be out of video memory" << endl;
 		UnbindCurrent();
