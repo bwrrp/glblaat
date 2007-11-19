@@ -292,6 +292,39 @@ bool GLProgram::SetUniform4i(const string &name, int v0, int v1, int v2, int v3)
 	return true;
 }
 
+bool GLProgram::SetUniformMatrix2fv(const std::string &name, int count, float *v, bool transpose)
+{
+	GLint loc = glGetUniformLocation(id, name.c_str());
+	GLUtility::CheckOpenGLError("GLProgram: SetUniformMatrix2fv() - glGetUniformLocation()");
+	if (loc == -1) return false;
+
+	glUniformMatrix2fv(loc, count, (transpose ? 1 : 0), v);
+	GLUtility::CheckOpenGLError("GLProgram: glUniformMatrix2fv");
+	return true;
+}
+
+bool GLProgram::SetUniformMatrix3fv(const std::string &name, int count, float *v, bool transpose)
+{
+	GLint loc = glGetUniformLocation(id, name.c_str());
+	GLUtility::CheckOpenGLError("GLProgram: SetUniformMatrix3fv() - glGetUniformLocation()");
+	if (loc == -1) return false;
+
+	glUniformMatrix3fv(loc, count, (transpose ? 1 : 0), v);
+	GLUtility::CheckOpenGLError("GLProgram: glUniformMatrix3fv");
+	return true;
+}
+
+bool GLProgram::SetUniformMatrix4fv(const std::string &name, int count, float *v, bool transpose)
+{
+	GLint loc = glGetUniformLocation(id, name.c_str());
+	GLUtility::CheckOpenGLError("GLProgram: SetUniformMatrix4fv() - glGetUniformLocation()");
+	if (loc == -1) return false;
+
+	glUniformMatrix4fv(loc, count, (transpose ? 1 : 0), v);
+	GLUtility::CheckOpenGLError("GLProgram: glUniformMatrix4fv");
+	return true;
+}
+
 bool GLProgram::UseTexture(const string &name, int texunit) 
 {
 	GLint loc = glGetUniformLocation(id, name.c_str());

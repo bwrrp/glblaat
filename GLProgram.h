@@ -33,7 +33,9 @@ public:
 	bool SetUniform3i(const std::string &name, int v1, int v2, int v3);
 	bool SetUniform4i(const std::string &name, int v1, int v2, int v3, int v4);
 
-	// TODO: matrices
+	bool SetUniformMatrix2fv(const std::string &name, int count, float *v, bool transpose = false);
+	bool SetUniformMatrix3fv(const std::string &name, int count, float *v, bool transpose = false);
+	bool SetUniformMatrix4fv(const std::string &name, int count, float *v, bool transpose = false);
 
 	bool UseTexture(const std::string &name, int texunit);
 
