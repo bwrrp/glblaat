@@ -131,8 +131,8 @@ GLTexture *GLTextureManager::RemoveTexture(const string &name)
 	// Do we know this texture?
 	if (textures.find(name) == textures.end()) 
 	{
-		cerr << "GLTextureManager: Error removing texture '" 
-			<< name << "', texture not found" << endl;
+		//cerr << "GLTextureManager: Error removing texture '" 
+		//	<< name << "', texture not found" << endl;
 		return 0;
 	}
 	GLManagedTexture *mtex = textures[name];
