@@ -16,14 +16,18 @@ GLRenderbuffer::GLRenderbuffer(int width, int height, int format)
 {
 	// Create the renderbuffer
 	glGenRenderbuffersEXT(1, &id);
+#ifndef NDEBUG
 	GLUtility::CheckOpenGLError("GLRenderbuffer: glGenRenderbuffersEXT()");
+#endif
 }
 
 GLRenderbuffer::~GLRenderbuffer() 
 {
 	// Delete the renderbuffer
 	glDeleteRenderbuffersEXT(1, &id);
+#ifndef NDEBUG
 	GLUtility::CheckOpenGLError("GLRenderbuffer: glDeleteRenderbuffersEXT()");
+#endif
 }
 
 void GLRenderbuffer::AttachToBoundFBO(int attachment) 
@@ -32,7 +36,9 @@ void GLRenderbuffer::AttachToBoundFBO(int attachment)
 
 	glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, 
 		attachment, GL_RENDERBUFFER_EXT, id);
+#ifndef NDEBUG
 	GLUtility::CheckOpenGLError("GLRenderbuffer: AttachToBoundFBO()");
+#endif
 }
 
 bool GLRenderbuffer::Resize(int width, int height)

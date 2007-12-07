@@ -45,9 +45,7 @@ bool GLRenderTexture2D::Resize(int width, int height)
 	this->height = height;
 
 	// Allocate a new texture
-	Allocate(internalformat, dataformat, datatype);
-
-	return false;
+	return Allocate(internalformat, dataformat, datatype);
 }
 
 void GLRenderTexture2D::AttachToBoundFBO(int attachment) 
@@ -56,7 +54,9 @@ void GLRenderTexture2D::AttachToBoundFBO(int attachment)
 
 	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, 
 		attachment, tex->GetTextureTarget(), tex->id, 0);
+#ifndef NDEBUG
 	GLUtility::CheckOpenGLError("GLRenderTexture2D: AttachToBoundFBO()");
+#endif
 }
 
 bool GLRenderTexture2D::Allocate(int internalformat, int format, int type) 
