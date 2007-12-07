@@ -64,7 +64,8 @@ bool GLTextureRectangle::Allocate(int format, int type, void *data)
 
 	GLUtility::CheckOpenGLError("GLTextureRectangle: Allocate() - proxy allocation");
 
-	if (w == 0 || GLUtility::GetErrorFlag()) 
+	bool eflag = GLUtility::GetErrorFlag();
+	if (w == 0 || eflag) 
 	{
 		cerr << "GLTextureRectangle: Proxy allocation failed, may be out of video memory" << endl;
 		UnbindCurrent();

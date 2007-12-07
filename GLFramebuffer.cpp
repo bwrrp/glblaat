@@ -31,7 +31,9 @@ GLFramebuffer::GLFramebuffer(int width, int height)
 	// Create the framebuffer
 	//cout << "GLFramebuffer: Constructor" << endl;
 	glGenFramebuffersEXT(1, &id);
+#ifndef NDEBUG
 	GLUtility::CheckOpenGLError("GLFramebuffer: glGenFramebuffersEXT()");
+#endif
 }
 
 GLFramebuffer::~GLFramebuffer() 
@@ -49,7 +51,9 @@ GLFramebuffer::~GLFramebuffer()
 	}
 	// Delete the framebuffer
 	glDeleteFramebuffersEXT(1, &id);
+#ifndef NDEBUG
 	GLUtility::CheckOpenGLError("GLFramebuffer: glDeleteFramebuffersEXT()");
+#endif
 }
 
 GLRendertarget *GLFramebuffer::AttachRendertarget(int attachment, GLRendertarget &rt) 
@@ -165,7 +169,9 @@ void GLFramebuffer::Bind()
 	// Set viewport
 	glViewport(0, 0, width, height);
 	bound = true;
+#ifndef NDEBUG
 	GLUtility::CheckOpenGLError("GLFramebuffer: Bind()");
+#endif
 }
 
 void GLFramebuffer::Unbind() 
@@ -184,7 +190,9 @@ void GLFramebuffer::Unbind()
 
 	bound = false;
 
+#ifndef NDEBUG
 	GLUtility::CheckOpenGLError("GLFramebuffer: Unbind()");
+#endif
 }
 
 bool GLFramebuffer::IsBound() 

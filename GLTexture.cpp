@@ -63,7 +63,9 @@ dataformat(0), datatype(0)
 	//cout << "GLTexture: Constructor" << endl;
 	// Create the texture object
 	glGenTextures(1, &id);
+#ifndef NDEBUG
 	GLUtility::CheckOpenGLError("GLTexture: glGenTextures()");
+#endif
 }
 
 GLTexture::~GLTexture() 
@@ -71,19 +73,25 @@ GLTexture::~GLTexture()
 	//cout << "GLTexture: Destructor" << endl;
 	// Delete the texture object
 	glDeleteTextures(1, &id);
+#ifndef NDEBUG
 	GLUtility::CheckOpenGLError("GLTexture: glDeleteTextures()");
+#endif
 }
 
 void GLTexture::BindToCurrent() 
 {
 	glBindTexture(GetTextureTarget(), id);
+#ifndef NDEBUG
 	GLUtility::CheckOpenGLError("GLTexture: BindToCurrent()");
+#endif
 }
 
 void GLTexture::UnbindCurrent() 
 {
 	glBindTexture(GetTextureTarget(), 0);
+#ifndef NDEBUG
 	GLUtility::CheckOpenGLError("GLTexture: UnbindCurrent()");
+#endif
 }
 
 bool GLTexture::Allocate(int format, int type, void *data) 
@@ -112,7 +120,8 @@ bool GLTexture::Allocate(int format, int type, void *data)
 
 	GLUtility::CheckOpenGLError("GLTexture: Allocate() - proxy allocation");
 
-	if (w == 0 || GLUtility::GetErrorFlag()) 
+	bool eflag = GLUtility::GetErrorFlag();
+	if (w == 0 || eflag) 
 	{
 		cerr << "GLTexture: Proxy allocation failed, may be out of video memory" << endl;
 		UnbindCurrent();

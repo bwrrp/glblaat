@@ -62,7 +62,9 @@ GLTexture3D::GLTexture3D(int width, int height, int depth, int internalformat)
 	//cout << "GLTexture3D: Constructor" << endl;
 	// Create the texture object
 	glGenTextures(1, &id);
+#ifndef NDEBUG
 	GLUtility::CheckOpenGLError("GLTexture3D: glGenTextures()");
+#endif
 }
 
 GLTexture3D::~GLTexture3D() 
@@ -70,7 +72,9 @@ GLTexture3D::~GLTexture3D()
 	//cout << "GLTexture3D: Destructor" << endl;
 	// Delete the texture object
 	glDeleteTextures(1, &id);
+#ifndef NDEBUG
 	GLUtility::CheckOpenGLError("GLTexture3D: glDeleteTextures()");
+#endif
 }
 
 bool GLTexture3D::Allocate(int format, int type, void *data) 
@@ -100,7 +104,8 @@ bool GLTexture3D::Allocate(int format, int type, void *data)
 	
 	GLUtility::CheckOpenGLError("GLTexture3D: Allocate() - proxy allocation");
 	
-	if (w == 0 || GLUtility::GetErrorFlag()) 
+	bool eflag = GLUtility::GetErrorFlag();
+	if (w == 0 || eflag) 
 	{
 		cerr << "GLTexture3D: Proxy allocation failed, may be out of video memory" << endl;
 		UnbindCurrent();
