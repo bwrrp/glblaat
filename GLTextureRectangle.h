@@ -10,7 +10,7 @@ public:
 
 	~GLTextureRectangle();
 
-	inline GLenum GetTextureTarget() { return GL_TEXTURE_RECTANGLE_ARB; }
+	inline GLenum GetTextureTarget() const { return GL_TEXTURE_RECTANGLE_ARB; }
 
 protected:
 	GLTextureRectangle(int width, int height, int internalformat);

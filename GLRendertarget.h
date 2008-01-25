@@ -11,7 +11,7 @@ public:
 
 	virtual bool Resize(int width, int height) = 0;
 
-	int GetTimesAttached() { return timesAttached; }
+	int GetTimesAttached() const { return timesAttached; }
 
 protected:
 	int width;

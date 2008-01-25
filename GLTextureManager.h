@@ -15,6 +15,7 @@ public:
 	bool AddTexture(const std::string &name, GLTexture *tex);
 	bool AddReservedSlot(const std::string &name, unsigned int slot);
 	GLTexture *GetTexture(const std::string &name);
+	const GLTexture *GetTexture(const std::string &name) const;
 	GLTexture *RemoveTexture(const std::string &name);
 	void DeleteTexture(const std::string &name);
 

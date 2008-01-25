@@ -18,9 +18,9 @@ public:
 
 	virtual ~GLTexture3D();
 
-	inline virtual GLenum GetTextureTarget() { return GL_TEXTURE_3D; }
+	inline virtual GLenum GetTextureTarget() const { return GL_TEXTURE_3D; }
 
-	inline int GetDepth() { return depth; }
+	inline int GetDepth() const { return depth; }
 
 protected:
 	int depth;

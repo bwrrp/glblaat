@@ -10,7 +10,7 @@ public:
 protected:
 	GLRenderTexture2DRectangle(int width, int height);
 
-	virtual bool Allocate(int internalformat, int format, int type);
+	bool Allocate(int internalformat, int format, int type);
 
 private:
 	// Not implemented

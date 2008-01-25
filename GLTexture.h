@@ -15,14 +15,14 @@ public:
 	virtual void BindToCurrent();
 	virtual void UnbindCurrent();
 
-	inline virtual GLenum GetTextureTarget() { return GL_TEXTURE_2D; }
+	inline virtual GLenum GetTextureTarget() const { return GL_TEXTURE_2D; }
 
-	inline int GetWidth() { return width; }
-	inline int GetHeight() { return height; }
-	inline int GetInternalFormat() { return internalformat; }
+	inline int GetWidth() const { return width; }
+	inline int GetHeight() const { return height; }
+	inline int GetInternalFormat() const { return internalformat; }
 
-	inline int GetDataFormat() { return dataformat; }
-	inline int GetDataType() { return datatype; }
+	inline int GetDataFormat() const { return dataformat; }
+	inline int GetDataType() const { return datatype; }
 
 protected:
 	GLuint id;

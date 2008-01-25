@@ -40,7 +40,9 @@ public:
 	bool UseTexture(const std::string &name, int texunit);
 
 	// Advanced use only
+	void AttachShader(GLShader *shader);
 	void AttachShader(GLShader &shader);
+	void DetachShader(GLShader *shader);
 	void DetachShader(GLShader &shader);
 
 protected:

@@ -4,6 +4,7 @@
 
 using namespace std;
 
+// ----------------------------------------------------------------------------
 GLShader::GLShader(GLenum type) 
 : id(0), type(type) 
 {
@@ -13,6 +14,7 @@ GLShader::GLShader(GLenum type)
 #endif
 }
 
+// ----------------------------------------------------------------------------
 GLShader::~GLShader() 
 {
 	glDeleteShader(id);
@@ -21,11 +23,13 @@ GLShader::~GLShader()
 #endif
 }
 
+// ----------------------------------------------------------------------------
 string GLShader::GetSource() const 
 {
 	return source;
 }
 
+// ----------------------------------------------------------------------------
 bool GLShader::SetSource(const string &source) 
 {
 	this->source = source;
@@ -46,6 +50,7 @@ bool GLShader::SetSource(const string &source)
 	return IsOk();
 }
 
+// ----------------------------------------------------------------------------
 bool GLShader::IsOk() const 
 {
 	GLint ok = GL_FALSE;
@@ -57,6 +62,7 @@ bool GLShader::IsOk() const
 	return (ok == GL_TRUE);
 }
 
+// ----------------------------------------------------------------------------
 string GLShader::GetInfoLog() const 
 {
 	int loglength = 0;

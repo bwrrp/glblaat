@@ -2,6 +2,7 @@
 
 #include "GLUtility.h"
 
+// ----------------------------------------------------------------------------
 GLRenderbuffer *GLRenderbuffer::New(int width, int height, int format) 
 {
 	GLRenderbuffer *rb = new GLRenderbuffer(width, height, format);
@@ -11,6 +12,7 @@ GLRenderbuffer *GLRenderbuffer::New(int width, int height, int format)
 	return rb;
 }
 
+// ----------------------------------------------------------------------------
 GLRenderbuffer::GLRenderbuffer(int width, int height, int format) 
 : GLRendertarget(width, height), id(0), format(format) 
 {
@@ -21,6 +23,7 @@ GLRenderbuffer::GLRenderbuffer(int width, int height, int format)
 #endif
 }
 
+// ----------------------------------------------------------------------------
 GLRenderbuffer::~GLRenderbuffer() 
 {
 	// Delete the renderbuffer
@@ -30,6 +33,7 @@ GLRenderbuffer::~GLRenderbuffer()
 #endif
 }
 
+// ----------------------------------------------------------------------------
 void GLRenderbuffer::AttachToBoundFBO(int attachment) 
 {
 	GLRendertarget::AttachToBoundFBO(attachment);
@@ -41,6 +45,7 @@ void GLRenderbuffer::AttachToBoundFBO(int attachment)
 #endif
 }
 
+// ----------------------------------------------------------------------------
 bool GLRenderbuffer::Resize(int width, int height)
 {
 	// Resize the renderbuffer object's data store
@@ -53,6 +58,7 @@ bool GLRenderbuffer::Resize(int width, int height)
 	return true;
 }
 
+// ----------------------------------------------------------------------------
 void GLRenderbuffer::Allocate() 
 {
 	glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, id);

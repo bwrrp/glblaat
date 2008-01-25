@@ -11,6 +11,7 @@ public:
 	static GLFramebuffer *New(int width, int height);
 	~GLFramebuffer();
 
+	GLRendertarget *AttachRendertarget(int attachment, GLRendertarget *rt);
 	GLRendertarget *AttachRendertarget(int attachment, GLRendertarget &rt);
 	GLRendertarget *DetachRendertarget(int attachment);
 
@@ -23,15 +24,16 @@ public:
 
 	void Bind();
 	void Unbind();
-	bool IsBound();
+	bool IsBound() const { return bound; }
 
 	int GetStatus();
 	bool IsOk();
 
-	inline int GetWidth() { return width; }
-	inline int GetHeight() { return height; }
+	inline int GetWidth() const { return width; }
+	inline int GetHeight() const { return height; }
 
 	GLTexture *GetTexture2D(int attachment);
+	const GLTexture *GetTexture2D(int attachment) const;
 
 	bool Resize(int width, int height);
 

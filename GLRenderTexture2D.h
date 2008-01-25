@@ -9,9 +9,10 @@ public:
 
 	virtual ~GLRenderTexture2D();
 
-	virtual GLTexture* GetTexture();
+	GLTexture* GetTexture() { return tex; }
+	const GLTexture* GetTexture() const { return tex; }
 
-	virtual bool Resize(int width, int height);
+	bool Resize(int width, int height);
 
 protected:
 	GLTexture *tex;

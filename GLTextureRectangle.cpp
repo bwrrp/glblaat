@@ -5,6 +5,7 @@
 
 using namespace std;
 
+// ----------------------------------------------------------------------------
 GLTextureRectangle *GLTextureRectangle::New(
 	int width, int height, int internalformat, 
 	int format, int type, void *data) 
@@ -27,17 +28,20 @@ GLTextureRectangle *GLTextureRectangle::New(
 	}
 }
 
+// ----------------------------------------------------------------------------
 GLTextureRectangle::GLTextureRectangle(int width, int height, int internalformat)
 : GLTexture(width, height, internalformat) 
 { 
 	//cout << "GLTextureRectangle: Constructor" << endl;
 }
 
+// ----------------------------------------------------------------------------
 GLTextureRectangle::~GLTextureRectangle() 
 { 
 	//cout << "GLTextureRectangle: Destructor" << endl;
 }
 
+// ----------------------------------------------------------------------------
 bool GLTextureRectangle::Allocate(int format, int type, void *data) 
 {
 	//cout << "GLTextureRectangle: Allocate" << endl;

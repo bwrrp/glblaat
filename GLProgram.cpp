@@ -10,6 +10,7 @@
 
 using namespace std;
 
+// ----------------------------------------------------------------------------
 GLProgram *GLProgram::New() 
 {
 	if (GLEW_VERSION_2_0) 
@@ -30,6 +31,7 @@ GLProgram *GLProgram::New()
 	}
 }
 
+// ----------------------------------------------------------------------------
 GLProgram::GLProgram() 
 : inuse(false) 
 {
@@ -40,6 +42,7 @@ GLProgram::GLProgram()
 #endif
 }
 
+// ----------------------------------------------------------------------------
 GLProgram::~GLProgram() 
 {
 	//cout << "GLProgram: Destructor" << endl;
@@ -63,6 +66,7 @@ GLProgram::~GLProgram()
 #endif
 }
 
+// ----------------------------------------------------------------------------
 bool GLProgram::AddVertexShader(const string &source) 
 {
 	GLShader *shader = GLVertexShader::New();
@@ -81,6 +85,7 @@ bool GLProgram::AddVertexShader(const string &source)
 	return true;
 }
 
+// ----------------------------------------------------------------------------
 bool GLProgram::AddFragmentShader(const string &source) 
 {
 	GLShader *shader = GLFragmentShader::New();
@@ -99,6 +104,12 @@ bool GLProgram::AddFragmentShader(const string &source)
 	return true;
 }
 
+// ----------------------------------------------------------------------------
+void GLProgram::AttachShader(GLShader *shader) 
+{
+	if (shader) AttachShader(*shader);
+}
+
 void GLProgram::AttachShader(GLShader &shader) 
 {
 	glAttachShader(id, shader.id);
@@ -111,6 +122,13 @@ void GLProgram::AttachShader(GLShader &shader)
 #endif
 }
 
+// ----------------------------------------------------------------------------
+void GLProgram::DetachShader(GLShader *shader) 
+{
+	if (shader) DetachShader(*shader);
+}
+
+// ----------------------------------------------------------------------------
 void GLProgram::DetachShader(GLShader &shader) 
 {
 	glDetachShader(id, shader.id);
@@ -123,6 +141,7 @@ void GLProgram::DetachShader(GLShader &shader)
 #endif
 }
 
+// ----------------------------------------------------------------------------
 bool GLProgram::Link() 
 {
 	glLinkProgram(id);
@@ -139,6 +158,7 @@ bool GLProgram::Link()
 	return ok;
 }
 
+// ----------------------------------------------------------------------------
 bool GLProgram::IsOk() const 
 {
 	GLint ok = GL_FALSE;
@@ -150,6 +170,7 @@ bool GLProgram::IsOk() const
 	return (ok == GL_TRUE);
 }
 
+// ----------------------------------------------------------------------------
 string GLProgram::GetInfoLog() const 
 {
 	int loglength = 0;
@@ -180,6 +201,7 @@ string GLProgram::GetInfoLog() const
 	}
 }
 
+// ----------------------------------------------------------------------------
 string GLProgram::GetInfoLogs() const 
 {
 	string log = "===Shader logs===\r\n";
@@ -196,6 +218,7 @@ string GLProgram::GetInfoLogs() const
 	return log;
 }
 
+// ----------------------------------------------------------------------------
 void GLProgram::Start() 
 {
 	if (inuse) 
@@ -212,6 +235,7 @@ void GLProgram::Start()
 #endif
 }
 
+// ----------------------------------------------------------------------------
 void GLProgram::Stop() 
 {
 	if (!inuse) 
@@ -228,6 +252,7 @@ void GLProgram::Stop()
 #endif
 }
 
+// ----------------------------------------------------------------------------
 bool GLProgram::SetUniform1f(const string &name, float v0) 
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
@@ -243,6 +268,7 @@ bool GLProgram::SetUniform1f(const string &name, float v0)
 	return true;
 }
 
+// ----------------------------------------------------------------------------
 bool GLProgram::SetUniform2f(const string &name, float v0, float v1) 
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
@@ -258,6 +284,7 @@ bool GLProgram::SetUniform2f(const string &name, float v0, float v1)
 	return true;
 }
 
+// ----------------------------------------------------------------------------
 bool GLProgram::SetUniform3f(const string &name, float v0, float v1, float v2) 
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
@@ -273,6 +300,7 @@ bool GLProgram::SetUniform3f(const string &name, float v0, float v1, float v2)
 	return true;
 }
 
+// ----------------------------------------------------------------------------
 bool GLProgram::SetUniform4f(const string &name, float v0, float v1, float v2, float v3) 
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
@@ -288,6 +316,7 @@ bool GLProgram::SetUniform4f(const string &name, float v0, float v1, float v2, f
 	return true;
 }
 
+// ----------------------------------------------------------------------------
 bool GLProgram::SetUniform1i(const string &name, int v0) 
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
@@ -303,6 +332,7 @@ bool GLProgram::SetUniform1i(const string &name, int v0)
 	return true;
 }
 
+// ----------------------------------------------------------------------------
 bool GLProgram::SetUniform2i(const string &name, int v0, int v1) 
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
@@ -318,6 +348,7 @@ bool GLProgram::SetUniform2i(const string &name, int v0, int v1)
 	return true;
 }
 
+// ----------------------------------------------------------------------------
 bool GLProgram::SetUniform3i(const string &name, int v0, int v1, int v2) 
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
@@ -333,6 +364,7 @@ bool GLProgram::SetUniform3i(const string &name, int v0, int v1, int v2)
 	return true;
 }
 
+// ----------------------------------------------------------------------------
 bool GLProgram::SetUniform4i(const string &name, int v0, int v1, int v2, int v3) 
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
@@ -348,6 +380,7 @@ bool GLProgram::SetUniform4i(const string &name, int v0, int v1, int v2, int v3)
 	return true;
 }
 
+// ----------------------------------------------------------------------------
 bool GLProgram::SetUniformMatrix2fv(const std::string &name, int count, float *v, bool transpose)
 {
 	GLint loc = glGetUniformLocation(id, name.c_str());
@@ -363,6 +396,7 @@ bool GLProgram::SetUniformMatrix2fv(const std::string &name, int count, float *v
 	return true;
 }
 
+// ----------------------------------------------------------------------------
 bool GLProgram::SetUniformMatrix3fv(const std::string &name, int count, float *v, bool transpose)
 {
 	GLint loc = glGetUniformLocation(id, name.c_str());
@@ -378,6 +412,7 @@ bool GLProgram::SetUniformMatrix3fv(const std::string &name, int count, float *v
 	return true;
 }
 
+// ----------------------------------------------------------------------------
 bool GLProgram::SetUniformMatrix4fv(const std::string &name, int count, float *v, bool transpose)
 {
 	GLint loc = glGetUniformLocation(id, name.c_str());
@@ -393,6 +428,7 @@ bool GLProgram::SetUniformMatrix4fv(const std::string &name, int count, float *v
 	return true;
 }
 
+// ----------------------------------------------------------------------------
 bool GLProgram::UseTexture(const string &name, int texunit) 
 {
 	GLint loc = glGetUniformLocation(id, name.c_str());
