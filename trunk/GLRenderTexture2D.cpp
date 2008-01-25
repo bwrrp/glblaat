@@ -2,6 +2,7 @@
 
 #include "GLUtility.h"
 
+// ----------------------------------------------------------------------------
 GLRenderTexture2D *GLRenderTexture2D::New(
 	int width, int height, int internalformat, int format, int type) 
 {
@@ -16,21 +17,19 @@ GLRenderTexture2D *GLRenderTexture2D::New(
 	return rt;
 }
 
+// ----------------------------------------------------------------------------
 GLRenderTexture2D::GLRenderTexture2D(int width, int height)
 : GLRendertarget(width, height), tex(0) 
 { 
 }
 
+// ----------------------------------------------------------------------------
 GLRenderTexture2D::~GLRenderTexture2D() 
 {
 	if (tex) delete tex;
 }
 
-GLTexture *GLRenderTexture2D::GetTexture() 
-{
-	return tex;
-}
-
+// ----------------------------------------------------------------------------
 bool GLRenderTexture2D::Resize(int width, int height)
 {
 	// Get texture metadata
@@ -48,6 +47,7 @@ bool GLRenderTexture2D::Resize(int width, int height)
 	return Allocate(internalformat, dataformat, datatype);
 }
 
+// ----------------------------------------------------------------------------
 void GLRenderTexture2D::AttachToBoundFBO(int attachment) 
 {
 	GLRendertarget::AttachToBoundFBO(attachment);
@@ -59,6 +59,7 @@ void GLRenderTexture2D::AttachToBoundFBO(int attachment)
 #endif
 }
 
+// ----------------------------------------------------------------------------
 bool GLRenderTexture2D::Allocate(int internalformat, int format, int type) 
 {
 	// Create an empty texture

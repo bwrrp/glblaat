@@ -126,6 +126,23 @@ GLTexture *GLTextureManager::GetTexture(const string &name)
 }
 
 // ----------------------------------------------------------------------------
+const GLTexture *GLTextureManager::GetTexture(const string &name) const
+{
+	// Do we know this texture?
+	if (textures.find(name) == textures.end()) 
+	{
+		cerr << "GLTextureManager: Error getting texture '" 
+			<< name << "', texture not found" << endl;
+		return 0;
+	}
+	// Reserved slots will just return null here
+	map<string, GLTextureManager::GLManagedTexture*>::const_iterator texit = 
+		textures.find(name);
+	if (texit == textures.end()) return 0;
+	return texit->second->texture;
+}
+
+// ----------------------------------------------------------------------------
 GLTexture *GLTextureManager::RemoveTexture(const string &name) 
 {
 	// Do we know this texture?

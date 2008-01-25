@@ -3,6 +3,7 @@
 
 #include "GLUtility.h"
 
+// ----------------------------------------------------------------------------
 GLRenderTexture2DRectangle *GLRenderTexture2DRectangle::New(int width, int height, int internalformat, int format, int type) {
 	GLRenderTexture2DRectangle *rt = new GLRenderTexture2DRectangle(width, height);
 	// Allocate memory
@@ -14,11 +15,18 @@ GLRenderTexture2DRectangle *GLRenderTexture2DRectangle::New(int width, int heigh
 	return rt;
 }
 
+// ----------------------------------------------------------------------------
 GLRenderTexture2DRectangle::GLRenderTexture2DRectangle(int width, int height) 
-: GLRenderTexture2D(width, height) { }
+: GLRenderTexture2D(width, height) 
+{ 
+}
 
-GLRenderTexture2DRectangle::~GLRenderTexture2DRectangle() { }
+// ----------------------------------------------------------------------------
+GLRenderTexture2DRectangle::~GLRenderTexture2DRectangle() 
+{ 
+}
 
+// ----------------------------------------------------------------------------
 bool GLRenderTexture2DRectangle::Allocate(int internalformat, int format, int type) {
 	// Create an empty texture
 	tex = GLTextureRectangle::New(width, height, internalformat, format, type, 0);

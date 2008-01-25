@@ -6,6 +6,7 @@
 
 using namespace std;
 
+// ----------------------------------------------------------------------------
 GLTexture3D *GLTexture3D::New(int width, int height, int depth, 
 							  int internalformat, int format, int type, 
 							  void *data) 
@@ -56,6 +57,7 @@ GLTexture3D *GLTexture3D::New(int width, int height, int depth,
 	}
 }
 
+// ----------------------------------------------------------------------------
 GLTexture3D::GLTexture3D(int width, int height, int depth, int internalformat)
 : GLTexture(width, height, internalformat), depth(depth)
 {
@@ -67,6 +69,7 @@ GLTexture3D::GLTexture3D(int width, int height, int depth, int internalformat)
 #endif
 }
 
+// ----------------------------------------------------------------------------
 GLTexture3D::~GLTexture3D() 
 {
 	//cout << "GLTexture3D: Destructor" << endl;
@@ -77,6 +80,7 @@ GLTexture3D::~GLTexture3D()
 #endif
 }
 
+// ----------------------------------------------------------------------------
 bool GLTexture3D::Allocate(int format, int type, void *data) 
 {
 	//cout << "GLTexture3D: Allocate" << endl;

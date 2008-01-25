@@ -10,6 +10,7 @@
 
 using namespace std;
 
+// ----------------------------------------------------------------------------
 // Need to use this factory to create FBOs
 GLFramebuffer* GLFramebuffer::New(int width, int height) 
 {
@@ -25,6 +26,7 @@ GLFramebuffer* GLFramebuffer::New(int width, int height)
 	return new GLFramebuffer(width, height);
 }
 
+// ----------------------------------------------------------------------------
 GLFramebuffer::GLFramebuffer(int width, int height) 
 : id(0), width(width), height(height), bound(false) 
 {
@@ -36,6 +38,7 @@ GLFramebuffer::GLFramebuffer(int width, int height)
 #endif
 }
 
+// ----------------------------------------------------------------------------
 GLFramebuffer::~GLFramebuffer() 
 {
 	//cout << "GLFramebuffer: Destructor" << endl;
@@ -56,6 +59,20 @@ GLFramebuffer::~GLFramebuffer()
 #endif
 }
 
+// ----------------------------------------------------------------------------
+GLRendertarget *GLFramebuffer::AttachRendertarget(int attachment, GLRendertarget *rt) 
+{
+	if (!rt)
+	{
+		return DetachRendertarget(attachment);
+	}
+	else
+	{
+		return AttachRendertarget(attachment, *rt);
+	}
+}
+
+// ----------------------------------------------------------------------------
 GLRendertarget *GLFramebuffer::AttachRendertarget(int attachment, GLRendertarget &rt) 
 {
 	if (!bound) Bind();
@@ -71,6 +88,7 @@ GLRendertarget *GLFramebuffer::AttachRendertarget(int attachment, GLRendertarget
 	return oldRt;
 }
 
+// ----------------------------------------------------------------------------
 GLRendertarget* GLFramebuffer::DetachRendertarget(int attachment) 
 {
 	if (!bound) Bind();
@@ -88,6 +106,7 @@ GLRendertarget* GLFramebuffer::DetachRendertarget(int attachment)
 	return rt;
 }
 
+// ----------------------------------------------------------------------------
 bool GLFramebuffer::CreateDepthBuffer(int format) 
 {
 	GLRendertarget *depthbuffer = GLRenderbuffer::New(width, height, format);
@@ -96,6 +115,7 @@ bool GLFramebuffer::CreateDepthBuffer(int format)
 	return true;
 }
 
+// ----------------------------------------------------------------------------
 bool GLFramebuffer::CreateDepthTexture(int format) 
 {
 	GLRendertarget *depthbuffer = GLRenderTexture2D::New(width, height, 
@@ -105,6 +125,7 @@ bool GLFramebuffer::CreateDepthTexture(int format)
 	return true;
 }
 
+// ----------------------------------------------------------------------------
 bool GLFramebuffer::CreateDepthTextureRectangle(int format) 
 {
 	if (!GLEW_ARB_texture_rectangle) return false;
@@ -116,6 +137,7 @@ bool GLFramebuffer::CreateDepthTextureRectangle(int format)
 	return true;
 }
 
+// ----------------------------------------------------------------------------
 bool GLFramebuffer::CreatePackedDepthStencilBuffer() 
 {
 	if (!GLEW_EXT_packed_depth_stencil) return false;
@@ -127,6 +149,7 @@ bool GLFramebuffer::CreatePackedDepthStencilBuffer()
 	return true;
 }
 
+// ----------------------------------------------------------------------------
 bool GLFramebuffer::CreatePackedDepthStencilTexture() 
 {
 	if (!GLEW_EXT_packed_depth_stencil) return false;
@@ -140,6 +163,7 @@ bool GLFramebuffer::CreatePackedDepthStencilTexture()
 	return true;
 }
 
+// ----------------------------------------------------------------------------
 bool GLFramebuffer::CreatePackedDepthStencilTextureRectangle() 
 {
 	if (!GLEW_ARB_texture_rectangle) return false;
@@ -154,7 +178,8 @@ bool GLFramebuffer::CreatePackedDepthStencilTextureRectangle()
 	return true;
 }
 
-void GLFramebuffer::Bind() 
+// ----------------------------------------------------------------------------
+void GLFramebuffer::Bind()  
 {
 	if (bound) 
 	{
@@ -174,6 +199,7 @@ void GLFramebuffer::Bind()
 #endif
 }
 
+// ----------------------------------------------------------------------------
 void GLFramebuffer::Unbind() 
 {
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
@@ -195,17 +221,14 @@ void GLFramebuffer::Unbind()
 #endif
 }
 
-bool GLFramebuffer::IsBound() 
-{
-	return bound;
-}
-
+// ----------------------------------------------------------------------------
 int GLFramebuffer::GetStatus() 
 {
 	if (!bound) Bind();
 	return glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 }
 
+// ----------------------------------------------------------------------------
 bool GLFramebuffer::IsOk() 
 {
 	int status = GetStatus();
@@ -224,6 +247,7 @@ bool GLFramebuffer::IsOk()
 	}
 }
 
+// ----------------------------------------------------------------------------
 GLTexture* GLFramebuffer::GetTexture2D(int attachment) 
 {
 	// Try to cast, return null if that attachment isn't a rendertarget
@@ -233,6 +257,19 @@ GLTexture* GLFramebuffer::GetTexture2D(int attachment)
 	return rt->GetTexture();
 }
 
+// ----------------------------------------------------------------------------
+const GLTexture* GLFramebuffer::GetTexture2D(int attachment) const
+{
+	// Try to cast, return null if that attachment isn't a rendertarget
+	map<int, GLRendertarget*>::const_iterator atit = attachments.find(attachment);
+	if (atit == attachments.end()) return 0;
+	const GLRenderTexture2D *rt = dynamic_cast<const GLRenderTexture2D*>(atit->second);
+	if (!rt) return 0;
+	// Return texture
+	return rt->GetTexture();
+}
+
+// ----------------------------------------------------------------------------
 bool GLFramebuffer::Resize(int width, int height)
 {
 	// Resize all attachments

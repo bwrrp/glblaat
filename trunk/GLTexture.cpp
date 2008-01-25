@@ -6,6 +6,7 @@
 
 using namespace std;
 
+// ----------------------------------------------------------------------------
 GLTexture *GLTexture::New(int width, int height, int internalformat, 
 						  int format, int type, void *data) 
 {
@@ -56,6 +57,7 @@ GLTexture *GLTexture::New(int width, int height, int internalformat,
 	}
 }
 
+// ----------------------------------------------------------------------------
 GLTexture::GLTexture(int width, int height, int internalformat)
 : id(0), width(width), height(height), internalformat(internalformat), 
 dataformat(0), datatype(0) 
@@ -68,6 +70,7 @@ dataformat(0), datatype(0)
 #endif
 }
 
+// ----------------------------------------------------------------------------
 GLTexture::~GLTexture() 
 {
 	//cout << "GLTexture: Destructor" << endl;
@@ -78,6 +81,7 @@ GLTexture::~GLTexture()
 #endif
 }
 
+// ----------------------------------------------------------------------------
 void GLTexture::BindToCurrent() 
 {
 	glBindTexture(GetTextureTarget(), id);
@@ -86,6 +90,7 @@ void GLTexture::BindToCurrent()
 #endif
 }
 
+// ----------------------------------------------------------------------------
 void GLTexture::UnbindCurrent() 
 {
 	glBindTexture(GetTextureTarget(), 0);
@@ -94,6 +99,7 @@ void GLTexture::UnbindCurrent()
 #endif
 }
 
+// ----------------------------------------------------------------------------
 bool GLTexture::Allocate(int format, int type, void *data) 
 {
 	//cout << "GLTexture: Allocate" << endl;
