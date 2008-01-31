@@ -443,3 +443,18 @@ bool GLProgram::UseTexture(const string &name, int texunit)
 #endif
 	return true;
 }
+
+// ----------------------------------------------------------------------------
+// The program needs to be re-linked for the change to take effect
+// Matrices are automatically bound as column vectors to index + i, i = 0..n
+bool GLProgram::BindAttribLocation(const std::string &name, int index)
+{
+	if (index < 0 || index >= GL_MAX_VERTEX_ATTRIBS)
+		return false;
+
+	glBindAttribLocation(id, index, name.c_str());
+#ifndef NDEBUG
+	GLUtility::CheckOpenGLError("GLProgram: BindAttribLocation()");
+#endif
+	return true;
+}
