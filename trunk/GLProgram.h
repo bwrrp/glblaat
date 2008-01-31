@@ -39,6 +39,8 @@ public:
 
 	bool UseTexture(const std::string &name, int texunit);
 
+	bool BindAttribLocation(const std::string &name, int index);
+
 	// Advanced use only
 	void AttachShader(GLShader *shader);
 	void AttachShader(GLShader &shader);
