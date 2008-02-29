@@ -62,22 +62,12 @@ GLTexture3D::GLTexture3D(int width, int height, int depth, int internalformat)
 : GLTexture(width, height, internalformat), depth(depth)
 {
 	//cout << "GLTexture3D: Constructor" << endl;
-	// Create the texture object
-	glGenTextures(1, &id);
-#ifndef NDEBUG
-	GLUtility::CheckOpenGLError("GLTexture3D: glGenTextures()");
-#endif
 }
 
 // ----------------------------------------------------------------------------
 GLTexture3D::~GLTexture3D() 
 {
 	//cout << "GLTexture3D: Destructor" << endl;
-	// Delete the texture object
-	glDeleteTextures(1, &id);
-#ifndef NDEBUG
-	GLUtility::CheckOpenGLError("GLTexture3D: glDeleteTextures()");
-#endif
 }
 
 // ----------------------------------------------------------------------------
