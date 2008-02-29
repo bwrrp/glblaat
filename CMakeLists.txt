@@ -89,8 +89,7 @@ SET( ${ProjectName}_Shader_Classes
 # Buffer Object framework (VBO, PBO)
 SET( ${ProjectName}_Buffer_Classes
     GLBuffer
-#   GLVertexBuffer
-#   GLPixelBuffer
+    GLPixelBuffer
 )
 
 # Misc support classes
