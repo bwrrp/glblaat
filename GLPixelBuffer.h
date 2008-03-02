@@ -8,8 +8,8 @@ public:
 	static GLPixelBuffer *New();
 	virtual ~GLPixelBuffer();
 
-	void BindAsPixelSource() { target = GL_PIXEL_UNPACK_BUFFER; Bind(); }
-	void BindAsPixelSink() { target = GL_PIXEL_PACK_BUFFER; Bind(); }
+	void BindAsPixelSink() { target = GL_PIXEL_PACK_BUFFER_ARB; Bind(); }
+	void BindAsPixelSource() { target = GL_PIXEL_UNPACK_BUFFER_ARB; Bind(); }
 
 protected:
 	GLPixelBuffer();
