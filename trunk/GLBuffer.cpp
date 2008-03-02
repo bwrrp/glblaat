@@ -29,7 +29,7 @@ GLBuffer *GLBuffer::New()
 
 // ----------------------------------------------------------------------------
 GLBuffer::GLBuffer() 
-: id(0), target(0), boundTo(GL_NONE), size(0)
+: id(0), target(0), boundTo(GL_NONE), size(0), usage(GL_NONE), mapped(0)
 {
 	//cout << "GLBuffer: Constructor" << endl;
 	glGenBuffers(1, &id);
@@ -98,7 +98,7 @@ void GLBuffer::GetSubData(int offset, int size, void *data)
 void *GLBuffer::Map(GLenum access) 
 {
 	// No need to map twice
-	if (mapped) return mapped;
+	assert(!mapped);
 	Bind();
 	mapped = glMapBuffer(boundTo, access);
 #ifndef NDEBUG
@@ -110,7 +110,7 @@ void *GLBuffer::Map(GLenum access)
 // ----------------------------------------------------------------------------
 bool GLBuffer::Unmap() 
 {
-	assert(!mapped);
+	assert(mapped);
 	// NOTE: if this returns false, data needs to be resubmitted
 	GLboolean res = glUnmapBuffer(boundTo);
 	mapped = 0;
