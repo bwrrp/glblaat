@@ -109,32 +109,24 @@ GLRendertarget* GLFramebuffer::DetachRendertarget(int attachment)
 // ----------------------------------------------------------------------------
 bool GLFramebuffer::CreateDepthBuffer(int format) 
 {
-	GLRendertarget *depthbuffer = GLRenderbuffer::New(width, height, format);
-	AttachRendertarget(GL_DEPTH_ATTACHMENT_EXT, *depthbuffer);
-
-	return true;
+	// Abuse the color buffer utility functions
+	return CreateColorBuffer(GL_DEPTH_ATTACHMENT_EXT, format);
 }
 
 // ----------------------------------------------------------------------------
 bool GLFramebuffer::CreateDepthTexture(int format) 
 {
-	GLRendertarget *depthbuffer = GLRenderTexture2D::New(width, height, 
+	// Abuse the color buffer utility functions
+	return CreateColorTexture(GL_DEPTH_ATTACHMENT_EXT, 
 		format, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE);
-	AttachRendertarget(GL_DEPTH_ATTACHMENT_EXT, *depthbuffer);
-
-	return true;
 }
 
 // ----------------------------------------------------------------------------
 bool GLFramebuffer::CreateDepthTextureRectangle(int format) 
 {
-	if (!GLEW_ARB_texture_rectangle) return false;
-
-	GLRendertarget *depthbuffer = GLRenderTexture2DRectangle::New(
-		width, height, format, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE);
-	AttachRendertarget(GL_DEPTH_ATTACHMENT_EXT, *depthbuffer);
-
-	return true;
+	// Abuse the color buffer utility functions
+	return CreateColorTextureRectangle(GL_DEPTH_ATTACHMENT_EXT, 
+		format, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE);
 }
 
 // ----------------------------------------------------------------------------
@@ -174,6 +166,42 @@ bool GLFramebuffer::CreatePackedDepthStencilTextureRectangle()
 		GL_DEPTH24_STENCIL8_EXT, GL_DEPTH_STENCIL_EXT, GL_UNSIGNED_INT_24_8_EXT);
 	AttachRendertarget(GL_DEPTH_ATTACHMENT_EXT, *dsb);
 	AttachRendertarget(GL_STENCIL_ATTACHMENT_EXT, *dsb);
+
+	return true;
+}
+
+// ----------------------------------------------------------------------------
+bool GLFramebuffer::CreateColorBuffer(int attachment, int format)
+{
+	GLRendertarget *colorbuffer = GLRenderbuffer::New(
+		width, height, format);
+	AttachRendertarget(attachment, *colorbuffer);
+
+	return true;
+}
+
+// ----------------------------------------------------------------------------
+bool GLFramebuffer::CreateColorTexture(int attachment, 
+									   int internalformat, 
+									   int format, int type)
+{
+	GLRendertarget *colorbuffer = GLRenderTexture2D::New(
+		width, height, internalformat, format, type);
+	AttachRendertarget(attachment, *colorbuffer);
+
+	return true;
+}
+
+// ----------------------------------------------------------------------------
+bool GLFramebuffer::CreateColorTextureRectangle(int attachment, 
+												int internalformat, 
+												int format, int type)
+{
+	if (!GLEW_ARB_texture_rectangle) return false;
+
+	GLRendertarget *colorbuffer = GLRenderTexture2DRectangle::New(
+		width, height, internalformat, format, type);
+	AttachRendertarget(attachment, *colorbuffer);
 
 	return true;
 }
