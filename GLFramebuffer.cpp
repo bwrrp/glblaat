@@ -135,8 +135,18 @@ bool GLFramebuffer::CreatePackedDepthStencilBuffer()
 	if (!GLEW_EXT_packed_depth_stencil) return false;
 
 	GLRendertarget *dsb = GLRenderbuffer::New(width, height, GL_DEPTH24_STENCIL8_EXT);
-	AttachRendertarget(GL_DEPTH_ATTACHMENT_EXT, *dsb);
-	AttachRendertarget(GL_STENCIL_ATTACHMENT_EXT, *dsb);
+	// Attach as depth buffer
+	GLRendertarget *old = AttachRendertarget(GL_DEPTH_ATTACHMENT_EXT, *dsb);
+	if (old)
+	{
+		if (old->GetTimesAttached() == 0) delete old;
+	}
+	// Attach as stencil
+	old = AttachRendertarget(GL_STENCIL_ATTACHMENT_EXT, *dsb);
+	if (old)
+	{
+		if (old->GetTimesAttached() == 0) delete old;
+	}
 
 	return true;
 }
@@ -149,8 +159,18 @@ bool GLFramebuffer::CreatePackedDepthStencilTexture()
 
 	GLRendertarget *dsb = GLRenderTexture2D::New(width, height, 
 		GL_DEPTH24_STENCIL8_EXT, GL_DEPTH_STENCIL_EXT, GL_UNSIGNED_INT_24_8_EXT);
-	AttachRendertarget(GL_DEPTH_ATTACHMENT_EXT, *dsb);
-	AttachRendertarget(GL_STENCIL_ATTACHMENT_EXT, *dsb);
+	// Attach as depth buffer
+	GLRendertarget *old = AttachRendertarget(GL_DEPTH_ATTACHMENT_EXT, *dsb);
+	if (old)
+	{
+		if (old->GetTimesAttached() == 0) delete old;
+	}
+	// Attach as stencil
+	old = AttachRendertarget(GL_STENCIL_ATTACHMENT_EXT, *dsb);
+	if (old)
+	{
+		if (old->GetTimesAttached() == 0) delete old;
+	}
 
 	return true;
 }
@@ -164,8 +184,18 @@ bool GLFramebuffer::CreatePackedDepthStencilTextureRectangle()
 
 	GLRendertarget *dsb = GLRenderTexture2DRectangle::New(width, height, 
 		GL_DEPTH24_STENCIL8_EXT, GL_DEPTH_STENCIL_EXT, GL_UNSIGNED_INT_24_8_EXT);
-	AttachRendertarget(GL_DEPTH_ATTACHMENT_EXT, *dsb);
-	AttachRendertarget(GL_STENCIL_ATTACHMENT_EXT, *dsb);
+	// Attach as depth buffer
+	GLRendertarget *old = AttachRendertarget(GL_DEPTH_ATTACHMENT_EXT, *dsb);
+	if (old)
+	{
+		if (old->GetTimesAttached() == 0) delete old;
+	}
+	// Attach as stencil
+	old = AttachRendertarget(GL_STENCIL_ATTACHMENT_EXT, *dsb);
+	if (old)
+	{
+		if (old->GetTimesAttached() == 0) delete old;
+	}
 
 	return true;
 }
@@ -173,9 +203,14 @@ bool GLFramebuffer::CreatePackedDepthStencilTextureRectangle()
 // ----------------------------------------------------------------------------
 bool GLFramebuffer::CreateColorBuffer(int attachment, int format)
 {
-	GLRendertarget *colorbuffer = GLRenderbuffer::New(
+	GLRendertarget *buffer = GLRenderbuffer::New(
 		width, height, format);
-	AttachRendertarget(attachment, *colorbuffer);
+	// Attach to target
+	GLRendertarget *old = AttachRendertarget(attachment, *buffer);
+	if (old)
+	{
+		if (old->GetTimesAttached() == 0) delete old;
+	}
 
 	return true;
 }
@@ -185,9 +220,14 @@ bool GLFramebuffer::CreateColorTexture(int attachment,
 									   int internalformat, 
 									   int format, int type)
 {
-	GLRendertarget *colorbuffer = GLRenderTexture2D::New(
+	GLRendertarget *buffer = GLRenderTexture2D::New(
 		width, height, internalformat, format, type);
-	AttachRendertarget(attachment, *colorbuffer);
+	// Attach to target
+	GLRendertarget *old = AttachRendertarget(attachment, *buffer);
+	if (old)
+	{
+		if (old->GetTimesAttached() == 0) delete old;
+	}
 
 	return true;
 }
@@ -199,9 +239,14 @@ bool GLFramebuffer::CreateColorTextureRectangle(int attachment,
 {
 	if (!GLEW_ARB_texture_rectangle) return false;
 
-	GLRendertarget *colorbuffer = GLRenderTexture2DRectangle::New(
+	GLRendertarget *buffer = GLRenderTexture2DRectangle::New(
 		width, height, internalformat, format, type);
-	AttachRendertarget(attachment, *colorbuffer);
+	// Attach to target
+	GLRendertarget *old = AttachRendertarget(attachment, *buffer);
+	if (old)
+	{
+		if (old->GetTimesAttached() == 0) delete old;
+	}
 
 	return true;
 }
