@@ -21,6 +21,20 @@ public:
 	bool CreatePackedDepthStencilBuffer();
 	bool CreatePackedDepthStencilTexture();
 	bool CreatePackedDepthStencilTextureRectangle();
+	
+	bool CreateColorBuffer(
+		int attachment = GL_COLOR_ATTACHMENT0_EXT, 
+		int format = GL_RGBA);
+	bool CreateColorTexture(
+		int attachment = GL_COLOR_ATTACHMENT0_EXT, 
+		int internalformat = GL_RGBA8, 
+		int format = GL_RGBA, 
+		int type = GL_UNSIGNED_BYTE);
+	bool CreateColorTextureRectangle(
+		int attachment = GL_COLOR_ATTACHMENT0_EXT, 
+		int internalformat = GL_RGBA8, 
+		int format = GL_RGBA, 
+		int type = GL_UNSIGNED_BYTE);
 
 	void Bind();
 	void Unbind();
