@@ -5,7 +5,6 @@
 
 // Some support for older GLEW versions
 #ifndef GLEW_EXT_timer_query
-#define GLEW_EXT_timer_query 0
 #define GL_TIME_ELAPSED_EXT GL_INVALID_VALUE
 #endif
 
@@ -14,11 +13,13 @@ using namespace std;
 // ----------------------------------------------------------------------------
 GLTimerQuery *GLTimerQuery::New() 
 {
+#ifdef GLEW_EXT_timer_query
 	if (GLEW_EXT_timer_query) 
 	{
 		return new GLTimerQuery();
 	} 
 	else 
+#endif
 	{
 		cerr << "GLTimerQuery: Timer queries not supported!" << endl;
 		return 0;
