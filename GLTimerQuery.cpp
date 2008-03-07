@@ -3,6 +3,12 @@
 #include "GLUtility.h"
 #include <iostream>
 
+// Some support for older GLEW versions
+#ifndef GLEW_EXT_timer_query
+#define GLEW_EXT_timer_query 0
+#define GL_TIME_ELAPSED_EXT GL_INVALID_VALUE
+#endif
+
 using namespace std;
 
 // ----------------------------------------------------------------------------
@@ -35,21 +41,25 @@ GLTimerQuery::~GLTimerQuery()
 // ----------------------------------------------------------------------------
 GLint64EXT GLTimerQuery::GetResulti64()
 {
-	GLint64EXT result;
+	GLint64EXT result = 0;
+#ifdef GLEW_EXT_timer_query
 	glGetQueryObjecti64vEXT(id, GL_QUERY_RESULT, &result);
 #ifndef NDEBUG
 	GLUtility::CheckOpenGLError("GLQuery: GetResult()");
-#endif
+#endif // NDEBUG
+#endif // GLEW_EXT_timer_query
 	return result;
 }
 
 // ----------------------------------------------------------------------------
 GLuint64EXT GLTimerQuery::GetResultui64()
 {
-	GLuint64EXT result;
+	GLuint64EXT result = 0;
+#ifdef GLEW_EXT_timer_query
 	glGetQueryObjectui64vEXT(id, GL_QUERY_RESULT, &result);
 #ifndef NDEBUG
 	GLUtility::CheckOpenGLError("GLQuery: GetResult()");
-#endif
+#endif // NDEBUG
+#endif // GLEW_EXT_timer_query
 	return result;
 }

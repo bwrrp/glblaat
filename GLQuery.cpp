@@ -70,7 +70,7 @@ int GLQuery::GetCounterBits()
 // ----------------------------------------------------------------------------
 int GLQuery::GetResulti()
 {
-	int result;
+	int result = 0;
 	glGetQueryObjectiv(id, GL_QUERY_RESULT, &result);
 #ifndef NDEBUG
 	GLUtility::CheckOpenGLError("GLQuery: GetResult()");
@@ -81,7 +81,7 @@ int GLQuery::GetResulti()
 // ----------------------------------------------------------------------------
 unsigned int GLQuery::GetResultui()
 {
-	unsigned int result;
+	unsigned int result = 0;
 	glGetQueryObjectuiv(id, GL_QUERY_RESULT, &result);
 #ifndef NDEBUG
 	GLUtility::CheckOpenGLError("GLQuery: GetResult()");
