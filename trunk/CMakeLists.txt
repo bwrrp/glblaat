@@ -46,6 +46,7 @@ SET( ${ProjectName}_Modules
     Framebuffer
     Shader
     Buffer
+    Query
     Misc
 )
 
@@ -55,6 +56,7 @@ SET( ${ProjectName}_ModuleNames
     "Framebuffer Objects"
     "GLSL Shaders"
     "Buffer Objects"
+    "Asynchronous Queries"
     "Helpful Things"
 )
 
@@ -90,6 +92,13 @@ SET( ${ProjectName}_Shader_Classes
 SET( ${ProjectName}_Buffer_Classes
     GLBuffer
     GLPixelBuffer
+)
+
+# Asynchronous Query framework (occlusion / timer queries)
+SET( ${ProjectName}_Query_Classes
+    GLQuery
+    GLOcclusionQuery
+    GLTimerQuery
 )
 
 # Misc support classes
