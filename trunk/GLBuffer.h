@@ -23,8 +23,6 @@ public:
 	void *Map(GLenum access);
 	bool Unmap();
 
-	// TODO: glVertexPointer, glNormalPointer, glWhateverPointer - handle these here?
-
 	int GetSize() { return size; }
 
 protected:
