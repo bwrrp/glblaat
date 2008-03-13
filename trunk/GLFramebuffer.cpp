@@ -323,8 +323,10 @@ bool GLFramebuffer::IsOk()
 // ----------------------------------------------------------------------------
 GLTexture* GLFramebuffer::GetTexture2D(int attachment) 
 {
-	// Try to cast, return null if that attachment isn't a rendertarget
-	GLRenderTexture2D *rt = dynamic_cast<GLRenderTexture2D*>(attachments[attachment]);
+	// Look up the texture, return 0 if nothing's attached
+	map<int, GLRendertarget*>::iterator atit = attachments.find(attachment);
+	if (atit == attachments.end()) return 0;
+	GLRenderTexture2D *rt = dynamic_cast<GLRenderTexture2D*>(atit->second);
 	if (!rt) return 0;
 	// Return texture
 	return rt->GetTexture();
@@ -333,7 +335,7 @@ GLTexture* GLFramebuffer::GetTexture2D(int attachment)
 // ----------------------------------------------------------------------------
 const GLTexture* GLFramebuffer::GetTexture2D(int attachment) const
 {
-	// Try to cast, return null if that attachment isn't a rendertarget
+	// Look up the texture, return 0 if nothing's attached
 	map<int, GLRendertarget*>::const_iterator atit = attachments.find(attachment);
 	if (atit == attachments.end()) return 0;
 	const GLRenderTexture2D *rt = dynamic_cast<const GLRenderTexture2D*>(atit->second);
