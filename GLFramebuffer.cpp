@@ -347,6 +347,9 @@ const GLTexture* GLFramebuffer::GetTexture2D(int attachment) const
 // ----------------------------------------------------------------------------
 bool GLFramebuffer::Resize(int width, int height)
 {
+	// Ignore unnecessary calls
+	if (this->width == width && this->height == height) return true;
+
 	// Resize all attachments
 	for (map<int, GLRendertarget*>::iterator i = attachments.begin(); i != attachments.end(); ) 
 	{
