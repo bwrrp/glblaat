@@ -3,8 +3,16 @@
 #include "GL.h"
 #include <string>
 #include <set>
+#include <vector>
 
 class GLShader;
+
+struct GLUniform
+{
+ 	int size;
+ 	unsigned int type; 
+	std::string name;
+};
 
 class GLProgram : public GLResource 
 {
@@ -40,6 +48,8 @@ public:
 	bool UseTexture(const std::string &name, int texunit);
 
 	bool BindAttribLocation(const std::string &name, int index);
+
+	std::vector<GLUniform> GetActiveUniforms();
 
 	// Advanced use only
 	void AttachShader(GLShader *shader);
