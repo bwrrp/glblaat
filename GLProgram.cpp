@@ -458,3 +458,50 @@ bool GLProgram::BindAttribLocation(const std::string &name, int index)
 #endif
 	return true;
 }
+
+// ----------------------------------------------------------------------------
+// Returns information on the active uniforms in the current program
+std::vector<GLUniform> GLProgram::GetActiveUniforms()
+{
+	std::vector<GLUniform> uniforms;
+
+	// Check if program is OK first
+	if (!IsOk())
+	{
+		cerr << "GLProgram: Program not ok, can't enumerate uniforms..." << endl;
+		return uniforms;
+	}
+
+	// Get number of active uniforms and max uniform name length
+	int numUniforms;
+	glGetProgramiv(id, GL_ACTIVE_UNIFORMS, &numUniforms);
+	int maxUniformNameLength;
+	glGetProgramiv(id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUniformNameLength);
+#ifndef NDEBUG
+	GLUtility::CheckOpenGLError("GLProgram: Getting number of active uniforms");
+#endif
+
+	// Temporary buffer for uniform names
+	char *name = new char[maxUniformNameLength];
+	unsigned int type = GL_NONE;
+	int size = 0;
+	int length = 0;
+
+	// Enumerate uniforms
+	for (int i = 0; i < numUniforms; ++i)
+	{
+		// Get uniform info
+		glGetActiveUniform(id, i, maxUniformNameLength, &length, &size, &type, name);
+		// Add to list
+		GLUniform uniform;
+		uniform.size = size;
+		uniform.type = type;
+		uniform.name = std::string(name);
+		uniforms.push_back(uniform);
+	}
+
+	// Clean up and return
+	delete [] name;
+
+	return uniforms;
+}
