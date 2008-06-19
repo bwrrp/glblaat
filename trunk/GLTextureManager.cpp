@@ -232,6 +232,8 @@ GLTexture *GLTextureManager::RemoveTexture(const string &name)
 	else
 	{
 		GLTexture *tex = GetTexture(name);
+		// Ignore invalid removals
+		if (!tex) return 0;
 
 		// If this texture is currently bound, unbind it
 		for (int unit = 0; unit < maxTextureUnits; ++unit)
@@ -301,7 +303,7 @@ void GLTextureManager::Bind()
 			GLTexture *tex = samplers[samplerId];
 			// This could be NULL due to programmer error 
 			// (removing a sampler without resetting programs that use it)
-			assert(tex);
+			//assert(tex);
 
 			// Check if anything is bound to this unit
 			GLTexture *oldTex = currentBinding[unit];
