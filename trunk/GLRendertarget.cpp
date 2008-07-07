@@ -4,7 +4,7 @@
 
 // ----------------------------------------------------------------------------
 GLRendertarget::GLRendertarget(int width, int height) 
-: width(width), height(height) 
+: width(width), height(height), timesAttached(0) 
 { 
 }
 
