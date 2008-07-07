@@ -52,6 +52,8 @@ GLFramebuffer::~GLFramebuffer()
 		// Delete the rendertarget if it's no longer attached anywhere
 		if (rt->GetTimesAttached() == 0) delete rt;
 	}
+	// Make sure we're not bound
+	if (bound) Unbind();
 	// Delete the framebuffer
 	glDeleteFramebuffersEXT(1, &id);
 #ifndef NDEBUG
