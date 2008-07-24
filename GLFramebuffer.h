@@ -46,7 +46,7 @@ public:
 	inline int GetWidth() const { return width; }
 	inline int GetHeight() const { return height; }
 
-	GLTexture *GetTexture2D(int attachment);
+	GLTexture *GetTexture2D(int attachment = GL_COLOR_ATTACHMENT0_EXT);
 	const GLTexture *GetTexture2D(int attachment) const;
 
 	bool Resize(int width, int height);
