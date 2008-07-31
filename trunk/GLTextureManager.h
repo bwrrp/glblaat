@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <queue>
 
 class GLTextureManager 
 {
@@ -61,6 +62,9 @@ protected:
 	
 	// Name to SamplerId mapping
 	std::map<std::string, SamplerId> samplersByName;
+
+	// SamplerIds for deleted samplers, to be re-used
+	std::queue<SamplerId> unusedSamplers;
 
 	// Texture store
 	std::map<std::string, GLTexture*> textures;

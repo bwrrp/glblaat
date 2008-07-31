@@ -78,15 +78,18 @@ GLTextureManager::SamplerId GLTextureManager::AddTexture(const string &name,
 	if (sampler == BAD_SAMPLER_ID)
 	{
 		// Find an unused SamplerId to register a new sampler
-		sampler = 0;
-		while (static_cast<unsigned int>(sampler) < samplers.size() 
-			&& samplers[sampler] != 0)
+		if (!unusedSamplers.empty())
 		{
-			++sampler;
+			sampler = unusedSamplers.front();
+			unusedSamplers.pop();
 		}
-		// No unused SamplerIds, add a new one
-		if (sampler == samplers.size()) samplers.push_back(tex);
-		
+		else
+		{
+			// No unused SamplerIds, add a new one
+			sampler = samplers.size();
+			samplers.push_back(tex);
+		}
+
 		samplersByName[name] = sampler;
 	}
 
@@ -145,6 +148,7 @@ void GLTextureManager::RemoveSampler(const std::string &name)
 	{
 		// TODO: invalidate any programs in cache that use this sampler?
 
+		unusedSamplers.push(sampler);
 		samplers[sampler] = 0;
 		samplersByName.erase(name);
 	}
@@ -311,7 +315,7 @@ void GLTextureManager::Bind()
 
 			// Set up texture in OpenGL
 			glActiveTexture(GL_TEXTURE0 + unit);
-			if (oldTex) currentBinding[unit]->UnbindCurrent();
+			if (oldTex) oldTex->UnbindCurrent();
 			tex->BindToCurrent();
 
 			// Update current binding
