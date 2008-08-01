@@ -48,6 +48,7 @@ public:
 	bool UseTexture(const std::string &name, int texunit);
 
 	bool BindAttribLocation(const std::string &name, int index);
+	int GetAttribLocation(const std::string &name);
 
 	std::vector<GLUniform> GetActiveUniforms();
 
