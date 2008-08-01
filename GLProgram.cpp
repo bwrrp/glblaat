@@ -449,7 +449,9 @@ bool GLProgram::UseTexture(const string &name, int texunit)
 // Matrices are automatically bound as column vectors to index + i, i = 0..n
 bool GLProgram::BindAttribLocation(const std::string &name, int index)
 {
-	if (index < 0 || index >= GL_MAX_VERTEX_ATTRIBS)
+	int maxAttribs;
+	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttribs);
+	if (index < 0 || index >= maxAttribs)
 		return false;
 
 	glBindAttribLocation(id, index, name.c_str());
@@ -457,6 +459,18 @@ bool GLProgram::BindAttribLocation(const std::string &name, int index)
 	GLUtility::CheckOpenGLError("GLProgram: BindAttribLocation()");
 #endif
 	return true;
+}
+
+// ----------------------------------------------------------------------------
+// Returns the assigned location of the given attribute, or -1 if not found
+// The program needs to be linked for this to work
+int GLProgram::GetAttribLocation(const std::string &name)
+{
+	int loc = glGetAttribLocation(id, name.c_str());
+#ifndef NDEBUG
+	GLUtility::CheckOpenGLError("GLProgram: GetAttribLocation()");
+#endif
+	return loc;
 }
 
 // ----------------------------------------------------------------------------
