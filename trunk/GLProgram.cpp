@@ -474,6 +474,54 @@ int GLProgram::GetAttribLocation(const std::string &name)
 }
 
 // ----------------------------------------------------------------------------
+// Returns information on the active attributes in the current program
+std::vector<GLAttribute> GLProgram::GetActiveAttributes()
+{
+	std::vector<GLAttribute> attribs;
+
+	// Check if program is OK first
+	if (!IsOk())
+	{
+		cerr << "GLProgram: Program not ok, can't enumerate attributes..." << endl;
+		return attribs;
+	}
+
+	// Get number of active attributes and max attribute name length
+	int numAttribs;
+	glGetProgramiv(id, GL_ACTIVE_ATTRIBUTES, &numAttribs);
+	int maxAttribNameLength;
+	glGetProgramiv(id, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxAttribNameLength);
+#ifndef NDEBUG
+	GLUtility::CheckOpenGLError("GLProgram: Getting number of active attributes");
+#endif
+
+	// Temporary buffer for attribute names
+	char *name = new char[maxAttribNameLength];
+	unsigned int type = GL_NONE;
+	int size = 0;
+	int length = 0;
+
+	// Enumerate attributes
+	for (int i = 0; i < numAttribs; ++i)
+	{
+		// Get attrib info
+		glGetActiveAttrib(id, i, maxAttribNameLength, &length, &size, &type, name);
+		// Add to list
+		GLAttribute attrib;
+		attrib.size = size;
+		attrib.type = type;
+		attrib.name = std::string(name);
+		attrib.index = GetAttribLocation(attrib.name);
+		attribs.push_back(attrib);
+	}
+
+	// Clean up and return
+	delete [] name;
+
+	return attribs;
+}
+
+// ----------------------------------------------------------------------------
 // Returns information on the active uniforms in the current program
 std::vector<GLUniform> GLProgram::GetActiveUniforms()
 {

@@ -7,6 +7,14 @@
 
 class GLShader;
 
+struct GLAttribute
+{
+	int size;
+	unsigned int type;
+	std::string name;
+	unsigned int index;
+};
+
 struct GLUniform
 {
  	int size;
@@ -50,6 +58,7 @@ public:
 	bool BindAttribLocation(const std::string &name, int index);
 	int GetAttribLocation(const std::string &name);
 
+	std::vector<GLAttribute> GetActiveAttributes();
 	std::vector<GLUniform> GetActiveUniforms();
 
 	// Advanced use only
