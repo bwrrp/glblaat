@@ -12,7 +12,7 @@ struct GLAttribute
 	int size;
 	unsigned int type;
 	std::string name;
-	unsigned int index;
+	int index;
 };
 
 struct GLUniform
