@@ -26,7 +26,7 @@ GLTexture *GLTexture::New(int width, int height, int internalformat,
 		// Non-power-of-two sizes, check available extensions
 		if (GLEW_ARB_texture_non_power_of_two) 
 		{
-			cout << "GLTexture: sizes are not powers of two, creating NPOTS texture" << endl;
+			//cout << "GLTexture: sizes are not powers of two, creating NPOTS texture" << endl;
 			GLTexture *tex = new GLTexture(width, height, internalformat);
 			if (!tex->Allocate(format, type, data)) 
 			{
