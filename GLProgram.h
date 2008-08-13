@@ -7,7 +7,7 @@
 
 class GLShader;
 
-struct GLAttribute
+struct GLAttributeInfo
 {
 	int size;
 	unsigned int type;
@@ -15,7 +15,7 @@ struct GLAttribute
 	int index;
 };
 
-struct GLUniform
+struct GLUniformInfo
 {
  	int size;
  	unsigned int type; 
@@ -58,8 +58,8 @@ public:
 	bool BindAttribLocation(const std::string &name, int index);
 	int GetAttribLocation(const std::string &name);
 
-	std::vector<GLAttribute> GetActiveAttributes();
-	std::vector<GLUniform> GetActiveUniforms();
+	std::vector<GLAttributeInfo> GetActiveAttributes();
+	std::vector<GLUniformInfo> GetActiveUniforms();
 
 	// Advanced use only
 	void AttachShader(GLShader *shader);

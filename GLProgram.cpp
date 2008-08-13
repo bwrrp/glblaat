@@ -475,9 +475,9 @@ int GLProgram::GetAttribLocation(const std::string &name)
 
 // ----------------------------------------------------------------------------
 // Returns information on the active attributes in the current program
-std::vector<GLAttribute> GLProgram::GetActiveAttributes()
+std::vector<GLAttributeInfo> GLProgram::GetActiveAttributes()
 {
-	std::vector<GLAttribute> attribs;
+	std::vector<GLAttributeInfo> attribs;
 
 	// Check if program is OK first
 	if (!IsOk())
@@ -507,7 +507,7 @@ std::vector<GLAttribute> GLProgram::GetActiveAttributes()
 		// Get attrib info
 		glGetActiveAttrib(id, i, maxAttribNameLength, &length, &size, &type, name);
 		// Add to list
-		GLAttribute attrib;
+		GLAttributeInfo attrib;
 		attrib.size = size;
 		attrib.type = type;
 		attrib.name = std::string(name);
@@ -523,9 +523,9 @@ std::vector<GLAttribute> GLProgram::GetActiveAttributes()
 
 // ----------------------------------------------------------------------------
 // Returns information on the active uniforms in the current program
-std::vector<GLUniform> GLProgram::GetActiveUniforms()
+std::vector<GLUniformInfo> GLProgram::GetActiveUniforms()
 {
-	std::vector<GLUniform> uniforms;
+	std::vector<GLUniformInfo> uniforms;
 
 	// Check if program is OK first
 	if (!IsOk())
@@ -555,7 +555,7 @@ std::vector<GLUniform> GLProgram::GetActiveUniforms()
 		// Get uniform info
 		glGetActiveUniform(id, i, maxUniformNameLength, &length, &size, &type, name);
 		// Add to list
-		GLUniform uniform;
+		GLUniformInfo uniform;
 		uniform.size = size;
 		uniform.type = type;
 		uniform.name = std::string(name);

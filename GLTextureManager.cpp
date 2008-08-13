@@ -370,8 +370,8 @@ bool GLTextureManager::SetupProgram(GLProgram *prog, bool updateIfKnown)
 		}
 
 		// Get the uniforms required for this program
-		std::vector<GLUniform> uniforms = prog->GetActiveUniforms();
-		for (std::vector<GLUniform>::iterator it = uniforms.begin();
+		std::vector<GLUniformInfo> uniforms = prog->GetActiveUniforms();
+		for (std::vector<GLUniformInfo>::iterator it = uniforms.begin();
 			it != uniforms.end(); ++it)
 		{
 			// Is this a sampler?
