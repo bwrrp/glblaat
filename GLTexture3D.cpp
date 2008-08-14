@@ -12,22 +12,10 @@ GLTexture3D *GLTexture3D::New(int width, int height, int depth,
 							  void *data) 
 {
 	// Check if width and height are powers of two
-    unsigned short xs = (unsigned short)width;
-    unsigned short ys = (unsigned short)height;
-	unsigned short zs = (unsigned short)depth;
-    while (!(xs & 0x01)) 
-	{
-		xs = xs >> 1;
-    }
-    while (!(ys & 0x01)) 
-	{
-		ys = ys >> 1;
-	}
-	while (!(zs & 0x01)) 
-	{
-		zs = zs >> 1;
-	}
-    if ((xs > 1)||(ys > 1)||(zs > 1)) 
+    unsigned int xs = static_cast<unsigned int>(width);
+    unsigned int ys = static_cast<unsigned int>(height);
+	unsigned int zs = static_cast<unsigned int>(depth);
+    if ((xs & (xs - 1)) || (ys & (ys - 1)) || (zs & (zs - 1))) 
 	{
 		// Non-power-of-two sizes, check available extensions
 		if (GLEW_ARB_texture_non_power_of_two) 
