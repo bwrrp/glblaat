@@ -27,7 +27,7 @@ public:
 
 	// Specify that the given unit is managed elsewhere, but can be used by programs as name
 	bool AddReservedSlot(const std::string &name, int unit);
-	
+
 	// Get a texture from the store
 	GLTexture *GetTexture(const std::string &name);
 	const GLTexture *GetTexture(const std::string &name) const;
