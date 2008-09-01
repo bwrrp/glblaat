@@ -1,6 +1,7 @@
 #include "GLTextureManager.h"
 
 #include <iostream>
+#include <sstream>
 #include <cassert>
 
 using namespace std;
@@ -97,7 +98,7 @@ GLTextureManager::SamplerId GLTextureManager::AddTexture(const string &name,
 	// TODO: what to do if this sampler already has a texture?
 	// (see also SwapTexture)
 	samplers[sampler] = tex;
-	
+
 	if (takeOwnership)
 	{
 		// Add the texture to the list
@@ -385,6 +386,7 @@ bool GLTextureManager::SetupProgram(GLProgram *prog, bool updateIfKnown)
 				|| it->type == GL_SAMPLER_2D_RECT_SHADOW_ARB)
 			{
 				// Is this a reserved texture unit?
+				// TODO: how to handle reserved slots in arrays?
 				std::map<std::string, int>::const_iterator rit = 
 					reserved.find(it->name);
 				if (rit != reserved.end())
@@ -394,36 +396,54 @@ bool GLTextureManager::SetupProgram(GLProgram *prog, bool updateIfKnown)
 				}
 				else
 				{
-					// Find the matching SamplerId
-					SamplerId sampler = GetSampler(it->name);
-					if (sampler == BAD_SAMPLER_ID)
+					// Is this a texture array?
+					for (int element = 0; element < it->size; ++element)
 					{
-						std::cerr 
-							<< "GLTextureManager: Program requires unknown sampler '" 
-							<< it->name << "'" << std::endl;
-						return false;
-					}
+						// Build the name for this element
+						std::string name;
+						if (it->size > 1)
+						{
+							std::ostringstream elementName;
+							elementName << it->name << "[" << element << "]";
+							name = elementName.str();
+						}
+						else
+						{
+							name = it->name;
+						}
 
-					// Find the next free texture unit
-					while (nextFreeUnit != maxTextureUnits 
-						&& inUse[nextFreeUnit]) 
-					{
-						++nextFreeUnit;
-					}
-					if (nextFreeUnit == maxTextureUnits)
-					{
-						// We ran out of texture units!
-						std::cerr 
-							<< "GLProgram: ran out of available texture units!" 
-							<< std::endl;
-						return false;
-					}
+						// Find the matching SamplerId
+						SamplerId sampler = GetSampler(name);
+						if (sampler == BAD_SAMPLER_ID)
+						{
+							std::cerr 
+								<< "GLTextureManager: Program requires unknown sampler '" 
+								<< name << "'" << std::endl;
+							// TODO: we might want to re-check this sampler the next time
+							return false;
+						}
 
-					// Assign sampler to unit
-					binding[nextFreeUnit] = sampler;
-					inUse[nextFreeUnit] = true;
-					// Pass the unit id to program
-					prog->UseTexture(it->name, nextFreeUnit);
+						// Find the next free texture unit
+						while (nextFreeUnit != maxTextureUnits 
+							&& inUse[nextFreeUnit]) 
+						{
+							++nextFreeUnit;
+						}
+						if (nextFreeUnit == maxTextureUnits)
+						{
+							// We ran out of texture units!
+							std::cerr 
+								<< "GLProgram: ran out of available texture units!" 
+								<< std::endl;
+							return false;
+						}
+
+						// Assign sampler to unit
+						binding[nextFreeUnit] = sampler;
+						inUse[nextFreeUnit] = true;
+						// Pass the unit id to program
+						prog->UseTexture(name, nextFreeUnit);
+					}
 				}
 			}
 		}
