@@ -78,6 +78,7 @@ SET( ${ProjectName}_Framebuffer_Classes
     GLRenderbuffer
     GLRenderTexture2D
     GLRenderTexture2DRectangle
+    GLRenderTexture3DLayer
 )
 
 # Shader framework

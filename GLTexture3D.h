@@ -5,6 +5,8 @@
 class GLTexture3D : public GLTexture 
 {
 public:
+	friend class GLRenderTexture3DLayer;
+
 	// Factory for textures
 	static GLTexture3D *New(int width, int height, int depth, 
 		int internalformat, int format, int type, void *data);
