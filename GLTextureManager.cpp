@@ -88,15 +88,28 @@ GLTextureManager::SamplerId GLTextureManager::AddTexture(const string &name,
 		{
 			// No unused SamplerIds, add a new one
 			sampler = samplers.size();
-			samplers.push_back(tex);
+			samplers.push_back(0);
 		}
 
 		samplersByName[name] = sampler;
 	}
 
+	// If the sampler already has a texture and we own it, delete it
+	GLTexture *samplerTex = samplers[sampler];
+	if (samplerTex)
+	{
+		GLTexture *oldTex = GetTexture(name);
+		// TODO: the sampler and store can be different if it was swapped out
+		//assert(oldTex == samplers[sampler]);
+		// For now, we DO NOT assume ownership of swapped in textures here;
+		// the destructor won't either unless the SwapTexture TODO is fixed!
+
+		// AddTexture however is a true replace operation, and therefore 
+		// deletes the old texture from the store.
+		if (oldTex != tex) delete oldTex;
+	}
+
 	// Assign this texture to the sampler
-	// TODO: what to do if this sampler already has a texture?
-	// (see also SwapTexture)
 	samplers[sampler] = tex;
 
 	if (takeOwnership)
@@ -134,8 +147,9 @@ GLTexture *GLTextureManager::SwapTexture(SamplerId sampler, GLTexture *tex)
 	GLTexture *oldTex = samplers[sampler];
 	samplers[sampler] = tex;
 
-	// TODO: should we also replace any texture in the store with the same name?
-
+	// TODO: we should replace the stored copy as well (if we own this texture)
+	// however, this operation should be as fast as possible, and we don't 
+	// know if tex is owned by us without knowing its name (see AddTexture)
 	return oldTex;
 }
 
@@ -186,17 +200,8 @@ GLTexture *GLTextureManager::GetTexture(const string &name)
 	map<std::string, GLTexture*>::iterator texit = 
 		textures.find(name);
 
-	if (texit == textures.end()) 
-	{
-#ifndef NDEBUG
-		std::cerr 
-			<< "GLTextureManager: Error getting texture '" 
-			<< name 
-			<< "', texture not found" 
-			<< std::endl;
-#endif
-		return 0;
-	}
+	if (texit == textures.end()) return 0;
+
 	return texit->second;
 }
 
@@ -208,17 +213,8 @@ const GLTexture *GLTextureManager::GetTexture(const string &name) const
 	map<std::string, GLTexture*>::const_iterator texit = 
 		textures.find(name);
 
-	if (texit == textures.end()) 
-	{
-#ifndef NDEBUG
-		std::cerr 
-			<< "GLTextureManager: Error getting texture '" 
-			<< name 
-			<< "', texture not found" 
-			<< std::endl;
-#endif
-		return 0;
-	}
+	if (texit == textures.end()) return 0;
+
 	return texit->second;
 }
 

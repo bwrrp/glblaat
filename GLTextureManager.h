@@ -75,11 +75,6 @@ protected:
 	// Current bindings
 	std::vector<GLTexture*> currentBinding;
 
-	// Old storage vars:
-	//std::map<std::string, GLManagedTexture*> textures;
-	//std::vector<GLManagedTexture*> assignments;
-	//std::vector<bool> inuse;
-
 	GLTextureManager();
 
 private:
