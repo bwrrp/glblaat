@@ -34,7 +34,7 @@ GLTextureManager *GLTextureManager::New()
 }
 
 // ----------------------------------------------------------------------------
-GLTextureManager::GLTextureManager()
+GLTextureManager::GLTextureManager() : currentProgram(0)
 { 
 	std::cout << "GLTextureManager: Constructor" << std::endl;
 
@@ -291,7 +291,7 @@ void GLTextureManager::BeginNewPass()
 void GLTextureManager::Bind() 
 {
 	// Make sure we have a current program
-	assert(currentProgram);
+	if (!currentProgram) return;
 	SamplerBindings &binding = bindings[currentProgram];
 
 	for (int unit = 0; unit < maxTextureUnits; ++unit) 
