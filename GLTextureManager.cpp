@@ -345,6 +345,8 @@ bool GLTextureManager::SetupProgram(GLProgram *prog, bool updateIfKnown)
 	// Set current program
 	currentProgram = prog;
 
+	bool ok = true;
+
 	// Do we know this program?
 	map<GLProgram*, SamplerBindings>::iterator it = 
 		bindings.find(prog);
@@ -416,36 +418,39 @@ bool GLTextureManager::SetupProgram(GLProgram *prog, bool updateIfKnown)
 								<< "GLTextureManager: Program requires unknown sampler '" 
 								<< name << "'" << std::endl;
 							// TODO: we might want to re-check this sampler the next time
-							return false;
+							// Continue for now, but inform the caller
+							ok = false;
 						}
-
-						// Find the next free texture unit
-						while (nextFreeUnit != maxTextureUnits 
-							&& inUse[nextFreeUnit]) 
+						else
 						{
-							++nextFreeUnit;
-						}
-						if (nextFreeUnit == maxTextureUnits)
-						{
-							// We ran out of texture units!
-							std::cerr 
-								<< "GLProgram: ran out of available texture units!" 
-								<< std::endl;
-							return false;
-						}
+							// Find the next free texture unit
+							while (nextFreeUnit != maxTextureUnits 
+								&& inUse[nextFreeUnit]) 
+							{
+								++nextFreeUnit;
+							}
+							if (nextFreeUnit == maxTextureUnits)
+							{
+								// We ran out of texture units!
+								std::cerr 
+									<< "GLProgram: ran out of available texture units!" 
+									<< std::endl;
+								return false;
+							}
 
-						// Assign sampler to unit
-						binding[nextFreeUnit] = sampler;
-						inUse[nextFreeUnit] = true;
-						// Pass the unit id to program
-						prog->UseTexture(name, nextFreeUnit);
+							// Assign sampler to unit
+							binding[nextFreeUnit] = sampler;
+							inUse[nextFreeUnit] = true;
+							// Pass the unit id to program
+							prog->UseTexture(name, nextFreeUnit);
+						}
 					}
 				}
 			}
 		}
 	}
 
-	return true;
+	return ok;
 }
 
 // ----------------------------------------------------------------------------
