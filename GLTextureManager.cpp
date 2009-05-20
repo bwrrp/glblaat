@@ -313,7 +313,7 @@ void GLTextureManager::Bind()
 			// Set up texture in OpenGL
 			glActiveTexture(GL_TEXTURE0 + unit);
 			if (oldTex) oldTex->UnbindCurrent();
-			tex->BindToCurrent();
+			if (tex) tex->BindToCurrent();
 
 			// Update current binding
 			currentBinding[unit] = tex;
