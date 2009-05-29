@@ -416,13 +416,12 @@ bool GLTextureManager::SetupProgram(GLProgram *prog, bool updateIfKnown)
 						// Find the matching SamplerId
 						SamplerId sampler = GetSampler(name);
 						// If size == 1 the sampler could be a single-element array
-						if (it->size == 1)
+						if (it->size == 1 && sampler == BAD_SAMPLER_ID)
 						{
 							string arrayName = it->name.substr(0, it->name.find('['));
 							std::ostringstream elementName;
 							elementName << arrayName << "[0]";
-							name = elementName.str();
-							sampler = GetSampler(name);
+							sampler = GetSampler(elementName.str());
 						}
 						if (sampler == BAD_SAMPLER_ID)
 						{
