@@ -401,8 +401,11 @@ bool GLTextureManager::SetupProgram(GLProgram *prog, bool updateIfKnown)
 						std::string name;
 						if (it->size > 1)
 						{
+							// Some implementations return name[0], 
+							// others just return name...
+							string arrayName = it->name.substr(0, it->name.find('['));
 							std::ostringstream elementName;
-							elementName << it->name << "[" << element << "]";
+							elementName << arrayName << "[" << element << "]";
 							name = elementName.str();
 						}
 						else
