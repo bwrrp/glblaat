@@ -86,6 +86,7 @@ SET( ${ProjectName}_Shader_Classes
     GLProgram
     GLShader
     GLFragmentShader
+    GLGeometryShader
     GLVertexShader
 )
 

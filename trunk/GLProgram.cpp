@@ -3,6 +3,7 @@
 #include "GL.h"
 #include "GLShader.h"
 #include "GLVertexShader.h"
+#include "GLGeometryShader.h"
 #include "GLFragmentShader.h"
 
 #include <iostream>
@@ -86,6 +87,25 @@ bool GLProgram::AddVertexShader(const string &source)
 }
 
 // ----------------------------------------------------------------------------
+bool GLProgram::AddGeometryShader(const std::string &source)
+{
+	GLShader *shader = GLGeometryShader::New();
+	if (!shader) return false;
+
+	if (!shader->SetSource(source))
+	{
+		cerr << "GLProgram: Error compiling geometry shader, dumping infolog..." << endl;
+		cerr << shader->GetInfoLog() << endl;
+		cerr << "GLProgram: Geometry shader source:" << endl;
+		cerr << shader->GetSource() << endl;
+		return false;
+	}
+
+	AttachShader(*shader);
+	return true;
+}
+
+// ----------------------------------------------------------------------------
 bool GLProgram::AddFragmentShader(const string &source) 
 {
 	GLShader *shader = GLFragmentShader::New();
@@ -102,6 +122,18 @@ bool GLProgram::AddFragmentShader(const string &source)
 
 	AttachShader(*shader);
 	return true;
+}
+
+// ----------------------------------------------------------------------------
+void GLProgram::SetParameteri(int param, int value)
+{
+	if (GL_GEOMETRY_SHADER_EXT)
+	{
+		glProgramParameteriEXT(id, param, value);
+#ifndef NDEBUG
+		GLUtility::CheckOpenGLError("GLProgram: SetParameteri()");
+#endif
+	}
 }
 
 // ----------------------------------------------------------------------------
