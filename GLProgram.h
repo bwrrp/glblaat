@@ -29,7 +29,11 @@ public:
 	~GLProgram();
 
 	bool AddVertexShader(const std::string &source);
+	bool AddGeometryShader(const std::string &source);
 	bool AddFragmentShader(const std::string &source);
+
+	void SetParameteri(int param, int value);
+
 	bool Link();
 
 	bool IsOk() const;
