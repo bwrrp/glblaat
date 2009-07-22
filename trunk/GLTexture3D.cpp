@@ -72,11 +72,11 @@ bool GLTexture3D::Allocate(int format, int type, void *data)
 	BindToCurrent();
 
 	// Set texture object parameters
-	glTexParameterf(GetTextureTarget(), GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-	glTexParameterf(GetTextureTarget(), GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-	glTexParameterf(GetTextureTarget(), GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-	glTexParameterf(GetTextureTarget(), GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-	glTexParameterf(GetTextureTarget(), GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE );
+	glTexParameterf(GetTextureTarget(), GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GetTextureTarget(), GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(GetTextureTarget(), GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GetTextureTarget(), GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GetTextureTarget(), GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
 	// Try a proxy allocation to check available memory and parameters
 	glTexImage3D(GL_PROXY_TEXTURE_3D, 0, internalformat, 
