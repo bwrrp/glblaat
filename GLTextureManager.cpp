@@ -284,6 +284,7 @@ void GLTextureManager::BeginNewPass()
 		++it;
 		UnregisterProgram(prog);
 	}
+	currentProgram = 0;
 }
 
 // ----------------------------------------------------------------------------
