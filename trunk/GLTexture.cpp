@@ -1,14 +1,17 @@
 #include "GLTexture.h"
 #include "GLTextureRectangle.h"
 
-#include <iostream>
 #include "GLUtility.h"
+
+#ifndef NDEBUG
+#include <iostream>
+#endif
 
 using namespace std;
 
 // ----------------------------------------------------------------------------
 GLTexture *GLTexture::New(int width, int height, int internalformat, 
-						  int format, int type, void *data) 
+	int format, int type, void *data) 
 {
 	if (width == 0) width = 1;
 	if (height == 0) height = 1;
@@ -20,7 +23,7 @@ GLTexture *GLTexture::New(int width, int height, int internalformat,
 		// Non-power-of-two sizes, check available extensions
 		if (GLEW_ARB_texture_non_power_of_two) 
 		{
-			//cout << "GLTexture: sizes are not powers of two, creating NPOTS texture" << endl;
+			// Standard textures can have non-power-of-two sizes
 			GLTexture *tex = new GLTexture(width, height, internalformat);
 			if (!tex->Allocate(format, type, data)) 
 			{
@@ -29,13 +32,20 @@ GLTexture *GLTexture::New(int width, int height, int internalformat,
 			}
 			return tex;
 		}
-		// Try a rectangle texture, note that these use different texture coordinates!
+		// Try a rectangle texture, these use different texture coordinates!
 		if (GLEW_ARB_texture_rectangle) 
 		{
-			cerr << "GLTexture: warning, using rectangle texture for NPOTS texture" << endl;
-			return GLTextureRectangle::New(width, height, internalformat, format, type, data);
+#ifndef NDEBUG
+			cerr << "GLTexture: warning, using rectangle texture "
+				<< "for NPOTS texture" << endl;
+#endif
+			return GLTextureRectangle::New(width, height, 
+				internalformat, format, type, data);
 		}
-		cerr << "GLTexture: non-power-of-two sized textures not supported" << endl;
+#ifndef NDEBUG
+		cerr << "GLTexture: non-power-of-two sized textures not supported" 
+			<< endl;
+#endif
 		return 0;
 	} 
 	else 
@@ -54,7 +64,7 @@ GLTexture *GLTexture::New(int width, int height, int internalformat,
 // ----------------------------------------------------------------------------
 GLTexture::GLTexture(int width, int height, int internalformat)
 : id(0), width(width), height(height), internalformat(internalformat), 
-dataformat(0), datatype(0) 
+	dataformat(0), datatype(0) 
 {
 	//cout << "GLTexture: Constructor" << endl;
 	// Create the texture object
@@ -123,7 +133,10 @@ bool GLTexture::Allocate(int format, int type, void *data)
 	bool eflag = GLUtility::GetErrorFlag();
 	if (w == 0 || eflag) 
 	{
-		cerr << "GLTexture: Proxy allocation failed, may be out of video memory" << endl;
+#ifndef NDEBUG		
+		cerr << "GLTexture: Proxy allocation failed, out of video memory?" 
+			<< endl;
+#endif
 		UnbindCurrent();
 		glPopAttrib();
 		return false;
@@ -139,7 +152,10 @@ bool GLTexture::Allocate(int format, int type, void *data)
 
 	if (GLUtility::GetErrorFlag()) 
 	{
-		cerr << "GLTexture: An OpenGL error occurred while allocating the texture" << endl;
+#ifndef NDEBUG
+		cerr << "GLTexture: An error occurred while allocating the texture" 
+			<< endl;
+#endif
 		GLUtility::ClearOpenGLError();
 		return false;
 	}

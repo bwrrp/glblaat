@@ -1,34 +1,42 @@
 #include "GLTextureManager.h"
 
-#include <iostream>
 #include <sstream>
-#include <cassert>
 
-using namespace std;
+#ifndef NDEBUG
+#include <iostream>
+#endif
+
+#include <cassert>
 
 // ----------------------------------------------------------------------------
 GLTextureManager *GLTextureManager::New() 
 {
 	if (GLEW_VERSION_1_3) 
 	{
+#ifndef NDEBUG
 		std::cout 
 			<< "GLTextureManager: Using OpenGL 1.3 or higher" 
 			<< std::endl;
+#endif
 		return new GLTextureManager();
 	} 
 	else if (GLEW_ARB_multitexture) 
 	{
 		// TODO: add ARB fallback
+#ifndef NDEBUG
 		std::cerr 
 			<< "GLTextureManager: Falling back to ARB (not implemented!)" 
 			<< std::endl;
+#endif
 		return 0;
 	} 
 	else 
 	{
+#ifndef NDEBUG
 		std::cerr 
 			<< "GLTextureManager: Multitexturing not supported!" 
 			<< std::endl;
+#endif
 		return 0;
 	}
 }
@@ -36,8 +44,6 @@ GLTextureManager *GLTextureManager::New()
 // ----------------------------------------------------------------------------
 GLTextureManager::GLTextureManager() : currentProgram(0)
 { 
-	std::cout << "GLTextureManager: Constructor" << std::endl;
-
 	// Get maximum number of texture units
 	// NOTE: this seems to be the right parameter, but I'm not 100% sure... 
 	// GL_MAX_TEXTURE_UNITS is stuck at 4 on nvidia, however 
@@ -51,8 +57,6 @@ GLTextureManager::GLTextureManager() : currentProgram(0)
 // ----------------------------------------------------------------------------
 GLTextureManager::~GLTextureManager() 
 {
-	std::cout << "GLTextureManager: Destructor" << std::endl;
-
 	// Make sure our textures are no longer bound
 	Unbind();
 
@@ -69,10 +73,9 @@ GLTextureManager::~GLTextureManager()
 }
 
 // ----------------------------------------------------------------------------
-// Add a new sampler with the given name and initial texture, optionally add to store
-GLTextureManager::SamplerId GLTextureManager::AddTexture(const string &name, 
-														 GLTexture *tex, 
-														 bool takeOwnership) 
+// Add a new sampler with the given name and texture, optionally add to store
+GLTextureManager::SamplerId GLTextureManager::AddTexture(
+	const std::string &name, GLTexture *tex, bool takeOwnership) 
 {
 	// Do we already have a sampler with this name?
 	SamplerId sampler = GetSampler(name);
@@ -123,9 +126,10 @@ GLTextureManager::SamplerId GLTextureManager::AddTexture(const string &name,
 
 // ----------------------------------------------------------------------------
 // Get the sampler with the given name
-GLTextureManager::SamplerId GLTextureManager::GetSampler(const std::string &name)
+GLTextureManager::SamplerId GLTextureManager::GetSampler(
+	const std::string &name)
 {
-	map<std::string, SamplerId>::iterator sit = samplersByName.find(name);
+	std::map<std::string, SamplerId>::iterator sit = samplersByName.find(name);
 	if (sit != samplersByName.end())
 	{
 		return sit->second;
@@ -170,8 +174,9 @@ void GLTextureManager::RemoveSampler(const std::string &name)
 }
 
 // ----------------------------------------------------------------------------
-// Specify that the given unit is managed elsewhere, but can be used by programs as name
-bool GLTextureManager::AddReservedSlot(const string &name, int unit) 
+// Specify that the given unit is managed elsewhere, but should be registered 
+// on programs using the given name
+bool GLTextureManager::AddReservedSlot(const std::string &name, int unit) 
 {
 	assert(0 <= unit && unit < maxTextureUnits);
 
@@ -194,10 +199,10 @@ bool GLTextureManager::AddReservedSlot(const string &name, int unit)
 
 // ----------------------------------------------------------------------------
 // Get a texture from the store
-GLTexture *GLTextureManager::GetTexture(const string &name) 
+GLTexture *GLTextureManager::GetTexture(const std::string &name) 
 {
 	// Do we know this texture?
-	map<std::string, GLTexture*>::iterator texit = 
+	std::map<std::string, GLTexture*>::iterator texit = 
 		textures.find(name);
 
 	if (texit == textures.end()) return 0;
@@ -207,10 +212,10 @@ GLTexture *GLTextureManager::GetTexture(const string &name)
 
 // ----------------------------------------------------------------------------
 // Get a texture from the store
-const GLTexture *GLTextureManager::GetTexture(const string &name) const
+const GLTexture *GLTextureManager::GetTexture(const std::string &name) const
 {
 	// Do we know this texture?
-	map<std::string, GLTexture*>::const_iterator texit = 
+	std::map<std::string, GLTexture*>::const_iterator texit = 
 		textures.find(name);
 
 	if (texit == textures.end()) return 0;
@@ -219,8 +224,8 @@ const GLTexture *GLTextureManager::GetTexture(const string &name) const
 }
 
 // ----------------------------------------------------------------------------
-// Remove a texture from the store (transfer ownership to caller), or delete a reserved slot
-GLTexture *GLTextureManager::RemoveTexture(const string &name) 
+// Remove and return a texture from the store, or delete a reserved slot
+GLTexture *GLTextureManager::RemoveTexture(const std::string &name) 
 {
 	// Is this a reserved slot?
 	std::map<std::string, int>::iterator rit = reserved.find(name);
@@ -256,7 +261,7 @@ GLTexture *GLTextureManager::RemoveTexture(const string &name)
 
 // ----------------------------------------------------------------------------
 // Delete a texture from the store, or delete a reserved slot
-void GLTextureManager::DeleteTexture(const string &name) 
+void GLTextureManager::DeleteTexture(const std::string &name) 
 {
 	GLTexture *tex = RemoveTexture(name);
 	if (tex) 
@@ -349,7 +354,7 @@ bool GLTextureManager::SetupProgram(GLProgram *prog, bool updateIfKnown)
 	bool ok = true;
 
 	// Do we know this program?
-	map<GLProgram*, SamplerBindings>::iterator it = 
+	std::map<GLProgram*, SamplerBindings>::iterator it = 
 		bindings.find(prog);
 	if (it == bindings.end() || updateIfKnown)
 	{
@@ -404,7 +409,8 @@ bool GLTextureManager::SetupProgram(GLProgram *prog, bool updateIfKnown)
 						{
 							// Some implementations return name[0], 
 							// others just return name...
-							string arrayName = it->name.substr(0, it->name.find('['));
+							std::string arrayName = it->name.substr(0, 
+								it->name.find('['));
 							std::ostringstream elementName;
 							elementName << arrayName << "[" << element << "]";
 							name = elementName.str();
@@ -416,20 +422,24 @@ bool GLTextureManager::SetupProgram(GLProgram *prog, bool updateIfKnown)
 
 						// Find the matching SamplerId
 						SamplerId sampler = GetSampler(name);
-						// If size == 1 the sampler could be a single-element array
+						// If size == 1 this could be a single-element array
 						if (it->size == 1 && sampler == BAD_SAMPLER_ID)
 						{
-							string arrayName = it->name.substr(0, it->name.find('['));
+							std::string arrayName = it->name.substr(0, 
+								it->name.find('['));
 							std::ostringstream elementName;
 							elementName << arrayName << "[0]";
 							sampler = GetSampler(elementName.str());
 						}
 						if (sampler == BAD_SAMPLER_ID)
 						{
+#ifndef NDEBUG
 							std::cerr 
-								<< "GLTextureManager: Program requires unknown sampler '" 
+								<< "GLTextureManager: " 
+								<< "Program requires unknown sampler '" 
 								<< name << "'" << std::endl;
-							// TODO: we might want to re-check this sampler the next time
+#endif
+							// TODO: we might want to re-check this sampler
 							// Continue for now, but inform the caller
 							ok = false;
 						}
@@ -444,9 +454,12 @@ bool GLTextureManager::SetupProgram(GLProgram *prog, bool updateIfKnown)
 							if (nextFreeUnit == maxTextureUnits)
 							{
 								// We ran out of texture units!
+#ifndef NDEBUG
 								std::cerr 
-									<< "GLProgram: ran out of available texture units!" 
+									<< "GLProgram: " 
+									<< "ran out of available texture units!" 
 									<< std::endl;
+#endif
 								return false;
 							}
 

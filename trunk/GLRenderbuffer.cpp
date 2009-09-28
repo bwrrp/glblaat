@@ -65,5 +65,6 @@ void GLRenderbuffer::Allocate()
 	glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, 
 		format, width, height);
 	glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
+	// This check is necessary as Resize's return value depends on it
 	GLUtility::CheckOpenGLError("GLRenderbuffer: Allocate()");
 }

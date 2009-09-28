@@ -1,7 +1,10 @@
 #include "GLTimerQuery.h"
 
 #include "GLUtility.h"
+
+#ifndef NDEBUG
 #include <iostream>
+#endif
 
 // Some support for older GLEW versions
 #ifndef GLEW_EXT_timer_query
@@ -21,7 +24,9 @@ GLTimerQuery *GLTimerQuery::New()
 	else 
 #endif
 	{
+#ifndef NDEBUG
 		cerr << "GLTimerQuery: Timer queries not supported!" << endl;
+#endif
 		return 0;
 	}
 }

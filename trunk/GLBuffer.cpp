@@ -1,7 +1,11 @@
 #include "GLBuffer.h"
 
 #include "GLUtility.h"
+
+#ifndef NDEBUG
 #include <iostream>
+#endif
+
 #include <cassert>
 
 using namespace std;
@@ -11,18 +15,24 @@ GLBuffer *GLBuffer::New()
 {
 	if (GLEW_VERSION_1_5) 
 	{
+#ifndef NDEBUG
 		cout << "GLBuffer: Using OpenGL 1.5" << endl;
+#endif
 		return new GLBuffer();
 	} 
 	else if (GLEW_ARB_vertex_buffer_object) 
 	{
 		// TODO: add an ARB version of these classes as fallback
+#ifndef NDEBUG
 		cerr << "GLBuffer: Falling back to ARB (not implemented!)" << endl;
+#endif
 		return 0;
 	} 
 	else 
 	{
+#ifndef NDEBUG
 		cerr << "GLBuffer: Buffer objects not supported!" << endl;
+#endif
 		return 0;
 	}
 }
@@ -99,6 +109,8 @@ void *GLBuffer::Map(GLenum access)
 {
 	// No need to map twice
 	assert(!mapped);
+	if (mapped) return 0;
+
 	Bind();
 	mapped = glMapBuffer(boundTo, access);
 #ifndef NDEBUG
@@ -111,6 +123,8 @@ void *GLBuffer::Map(GLenum access)
 bool GLBuffer::Unmap() 
 {
 	assert(mapped);
+	if (!mapped) return false;
+
 	// NOTE: if this returns false, data needs to be resubmitted
 	GLboolean res = glUnmapBuffer(boundTo);
 	mapped = 0;

@@ -6,8 +6,13 @@
 #include "GLGeometryShader.h"
 #include "GLFragmentShader.h"
 
-#include <iostream>
 #include "GLUtility.h"
+
+#ifndef NDEBUG
+#include <iostream>
+#endif
+
+#include <cassert>
 
 using namespace std;
 
@@ -16,18 +21,25 @@ GLProgram *GLProgram::New()
 {
 	if (GLEW_VERSION_2_0) 
 	{
+#ifndef NDEBUG
 		cout << "GLProgram: Using OpenGL 2.0" << endl;
+#endif
 		return new GLProgram();
 	} 
-	else if (GLEW_ARB_shader_objects && GLEW_ARB_vertex_shader && GLEW_ARB_fragment_shader) 
+	else if (GLEW_ARB_shader_objects && GLEW_ARB_vertex_shader && 
+		GLEW_ARB_fragment_shader) 
 	{
 		// TODO: add an ARB version of these classes as fallback
+#ifndef NDEBUG
 		cerr << "GLProgram: Falling back to ARB (not implemented!)" << endl;
+#endif
 		return 0;
 	} 
 	else 
 	{
+#ifndef NDEBUG
 		cerr << "GLProgram: Shaders not supported!" << endl;
+#endif
 		return 0;
 	}
 }
@@ -36,7 +48,6 @@ GLProgram *GLProgram::New()
 GLProgram::GLProgram() 
 : inuse(false) 
 {
-	//cout << "GLProgram: Constructor" << endl;
 	id = glCreateProgram();
 #ifndef NDEBUG
 	GLUtility::CheckOpenGLError("GLProgram: glCreateProgram()");
@@ -46,7 +57,6 @@ GLProgram::GLProgram()
 // ----------------------------------------------------------------------------
 GLProgram::~GLProgram() 
 {
-	//cout << "GLProgram: Destructor" << endl;
 	for (set<GLShader*>::iterator i = shaders.begin(); i != shaders.end();) 
 	{
 		// Grab shader reference
@@ -75,10 +85,13 @@ bool GLProgram::AddVertexShader(const string &source)
 
 	if (!shader->SetSource(source)) 
 	{
-		cerr << "GLProgram: Error compiling vertex shader, dumping infolog..." << endl;
+#ifndef NDEBUG
+		cerr << "GLProgram: Error compiling vertex shader, dumping log..." 
+			<< endl;
 		cerr << shader->GetInfoLog() << endl;
 		cerr << "GLProgram: Vertex shader source:" << endl;
 		cerr << shader->GetSource() << endl;
+#endif
 		return false;
 	}
 
@@ -94,10 +107,13 @@ bool GLProgram::AddGeometryShader(const std::string &source)
 
 	if (!shader->SetSource(source))
 	{
-		cerr << "GLProgram: Error compiling geometry shader, dumping infolog..." << endl;
+#ifndef NDEBUG
+		cerr << "GLProgram: Error compiling geometry shader, dumping log..." 
+			<< endl;
 		cerr << shader->GetInfoLog() << endl;
 		cerr << "GLProgram: Geometry shader source:" << endl;
 		cerr << shader->GetSource() << endl;
+#endif
 		return false;
 	}
 
@@ -113,10 +129,13 @@ bool GLProgram::AddFragmentShader(const string &source)
 
 	if (!shader->SetSource(source)) 
 	{
-		cerr << "GLProgram: Error compiling fragment shader, dumping infolog..." << endl;
+#ifndef NDEBUG
+		cerr << "GLProgram: Error compiling fragment shader, dumping log..." 
+			<< endl;
 		cerr << shader->GetInfoLog() << endl;
 		cerr << "GLProgram: Fragment shader source:" << endl;
 		cerr << shader->GetSource() << endl;
+#endif
 		return false;
 	}
 
@@ -142,6 +161,7 @@ void GLProgram::AttachShader(GLShader *shader)
 	if (shader) AttachShader(*shader);
 }
 
+// ----------------------------------------------------------------------------
 void GLProgram::AttachShader(GLShader &shader) 
 {
 	glAttachShader(id, shader.id);
@@ -149,9 +169,6 @@ void GLProgram::AttachShader(GLShader &shader)
 	GLUtility::CheckOpenGLError("GLProgram: AttachShader()");
 #endif
 	shaders.insert(&shader);
-#ifndef NDEBUG
-	//cout << "GLProgram: Attached shader" << endl;
-#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -168,9 +185,6 @@ void GLProgram::DetachShader(GLShader &shader)
 	GLUtility::CheckOpenGLError("GLProgram: DetachShader()");
 #endif
 	shaders.erase(&shader);
-#ifndef NDEBUG
-	//cout << "GLProgram: Detached shader" << endl;
-#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -184,8 +198,11 @@ bool GLProgram::Link()
 	bool ok = IsOk();
 	if (!ok) 
 	{
-		cerr << "GLProgram: Error linking shader program, dumping infolog..." << endl;
+#ifndef NDEBUG
+		cerr << "GLProgram: Error linking shader program, dumping log..." 
+			<< endl;
 		cerr << GetInfoLog() << endl;
+#endif
 	}
 	return ok;
 }
@@ -210,7 +227,8 @@ string GLProgram::GetInfoLog() const
 	// Get the length of the log
 	glGetProgramiv(id, GL_INFO_LOG_LENGTH, &loglength);
 #ifndef NDEBUG
-	GLUtility::CheckOpenGLError("GLProgram: GetInfoLog() - getting log length");
+	GLUtility::CheckOpenGLError(
+		"GLProgram: GetInfoLog() - getting log length");
 #endif
 	if (loglength > 0) 
 	{
@@ -238,7 +256,8 @@ string GLProgram::GetInfoLogs() const
 {
 	string log = "===Shader logs===\r\n";
 	// Get shader logs
-	for (set<GLShader*>::const_iterator i = shaders.begin(); i != shaders.end(); ++i) 
+	for (set<GLShader*>::const_iterator i = shaders.begin(); 
+		i != shaders.end(); ++i) 
 	{
 		log += (*i)->GetInfoLog();
 		log += "\r\n-----------------\r\n";
@@ -253,16 +272,12 @@ string GLProgram::GetInfoLogs() const
 // ----------------------------------------------------------------------------
 void GLProgram::Start() 
 {
-	if (inuse) 
-	{
-		cerr << "GLProgram: Start() called, but program already in use" << endl;
-		return;
-	}
+	assert(!inuse);
+	if (inuse) return;
 
 	glUseProgram(id);
 	inuse = true;
 #ifndef NDEBUG
-	//cout << "GLProgram: Started" << endl;
 	GLUtility::CheckOpenGLError("GLProgram: Start()");
 #endif
 }
@@ -270,16 +285,12 @@ void GLProgram::Start()
 // ----------------------------------------------------------------------------
 void GLProgram::Stop() 
 {
-	if (!inuse) 
-	{
-		cerr << "GLProgram: Stop() called, but program not in use" << endl;
-		return;
-	}
+	assert(inuse);
+	if (!inuse) return;
 
 	glUseProgram(0);
 	inuse = false;
 #ifndef NDEBUG
-	//cout << "GLProgram: Stopped" << endl;
 	GLUtility::CheckOpenGLError("GLProgram: Stop()");
 #endif
 }
@@ -289,7 +300,8 @@ bool GLProgram::SetUniform1f(const string &name, float v0)
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
 #ifndef NDEBUG
-	GLUtility::CheckOpenGLError("GLProgram: SetUniform1f() - glGetUniformLocation()");
+	GLUtility::CheckOpenGLError(
+		"GLProgram: SetUniform1f() - glGetUniformLocation()");
 #endif
 	if (loc == -1) return false;
 
@@ -305,7 +317,8 @@ bool GLProgram::SetUniform2f(const string &name, float v0, float v1)
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
 #ifndef NDEBUG
-	GLUtility::CheckOpenGLError("GLProgram: SetUniform2f() - glGetUniformLocation()");
+	GLUtility::CheckOpenGLError(
+		"GLProgram: SetUniform2f() - glGetUniformLocation()");
 #endif
 	if (loc == -1) return false;
 
@@ -321,7 +334,8 @@ bool GLProgram::SetUniform3f(const string &name, float v0, float v1, float v2)
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
 #ifndef NDEBUG
-	GLUtility::CheckOpenGLError("GLProgram: SetUniform3f() - glGetUniformLocation()");
+	GLUtility::CheckOpenGLError(
+		"GLProgram: SetUniform3f() - glGetUniformLocation()");
 #endif
 	if (loc == -1) return false;
 
@@ -333,11 +347,13 @@ bool GLProgram::SetUniform3f(const string &name, float v0, float v1, float v2)
 }
 
 // ----------------------------------------------------------------------------
-bool GLProgram::SetUniform4f(const string &name, float v0, float v1, float v2, float v3) 
+bool GLProgram::SetUniform4f(const string &name, 
+	float v0, float v1, float v2, float v3) 
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
 #ifndef NDEBUG
-	GLUtility::CheckOpenGLError("GLProgram: SetUniform4f() - glGetUniformLocation()");
+	GLUtility::CheckOpenGLError(
+		"GLProgram: SetUniform4f() - glGetUniformLocation()");
 #endif
 	if (loc == -1) return false;
 
@@ -353,7 +369,8 @@ bool GLProgram::SetUniform1i(const string &name, int v0)
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
 #ifndef NDEBUG
-	GLUtility::CheckOpenGLError("GLProgram: SetUniform1i() - glGetUniformLocation()");
+	GLUtility::CheckOpenGLError(
+		"GLProgram: SetUniform1i() - glGetUniformLocation()");
 #endif
 	if (loc == -1) return false;
 
@@ -369,7 +386,8 @@ bool GLProgram::SetUniform2i(const string &name, int v0, int v1)
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
 #ifndef NDEBUG
-	GLUtility::CheckOpenGLError("GLProgram: SetUniform2i() - glGetUniformLocation()");
+	GLUtility::CheckOpenGLError(
+		"GLProgram: SetUniform2i() - glGetUniformLocation()");
 #endif
 	if (loc == -1) return false;
 
@@ -385,7 +403,8 @@ bool GLProgram::SetUniform3i(const string &name, int v0, int v1, int v2)
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
 #ifndef NDEBUG
-	GLUtility::CheckOpenGLError("GLProgram: SetUniform3i() - glGetUniformLocation()");
+	GLUtility::CheckOpenGLError(
+		"GLProgram: SetUniform3i() - glGetUniformLocation()");
 #endif
 	if (loc == -1) return false;
 
@@ -397,11 +416,13 @@ bool GLProgram::SetUniform3i(const string &name, int v0, int v1, int v2)
 }
 
 // ----------------------------------------------------------------------------
-bool GLProgram::SetUniform4i(const string &name, int v0, int v1, int v2, int v3) 
+bool GLProgram::SetUniform4i(const string &name, 
+	int v0, int v1, int v2, int v3) 
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
 #ifndef NDEBUG
-	GLUtility::CheckOpenGLError("GLProgram: SetUniform4i() - glGetUniformLocation()");
+	GLUtility::CheckOpenGLError(
+		"GLProgram: SetUniform4i() - glGetUniformLocation()");
 #endif
 	if (loc == -1) return false;
 
@@ -413,11 +434,13 @@ bool GLProgram::SetUniform4i(const string &name, int v0, int v1, int v2, int v3)
 }
 
 // ----------------------------------------------------------------------------
-bool GLProgram::SetUniformMatrix2fv(const std::string &name, int count, float *v, bool transpose)
+bool GLProgram::SetUniformMatrix2fv(const std::string &name, 
+	int count, float *v, bool transpose)
 {
 	GLint loc = glGetUniformLocation(id, name.c_str());
 #ifndef NDEBUG
-	GLUtility::CheckOpenGLError("GLProgram: SetUniformMatrix2fv() - glGetUniformLocation()");
+	GLUtility::CheckOpenGLError(
+		"GLProgram: SetUniformMatrix2fv() - glGetUniformLocation()");
 #endif
 	if (loc == -1) return false;
 
@@ -429,11 +452,13 @@ bool GLProgram::SetUniformMatrix2fv(const std::string &name, int count, float *v
 }
 
 // ----------------------------------------------------------------------------
-bool GLProgram::SetUniformMatrix3fv(const std::string &name, int count, float *v, bool transpose)
+bool GLProgram::SetUniformMatrix3fv(const std::string &name, 
+	int count, float *v, bool transpose)
 {
 	GLint loc = glGetUniformLocation(id, name.c_str());
 #ifndef NDEBUG
-	GLUtility::CheckOpenGLError("GLProgram: SetUniformMatrix3fv() - glGetUniformLocation()");
+	GLUtility::CheckOpenGLError(
+		"GLProgram: SetUniformMatrix3fv() - glGetUniformLocation()");
 #endif
 	if (loc == -1) return false;
 
@@ -445,11 +470,13 @@ bool GLProgram::SetUniformMatrix3fv(const std::string &name, int count, float *v
 }
 
 // ----------------------------------------------------------------------------
-bool GLProgram::SetUniformMatrix4fv(const std::string &name, int count, float *v, bool transpose)
+bool GLProgram::SetUniformMatrix4fv(const std::string &name, 
+	int count, float *v, bool transpose)
 {
 	GLint loc = glGetUniformLocation(id, name.c_str());
 #ifndef NDEBUG
-	GLUtility::CheckOpenGLError("GLProgram: SetUniformMatrix4fv() - glGetUniformLocation()");
+	GLUtility::CheckOpenGLError(
+		"GLProgram: SetUniformMatrix4fv() - glGetUniformLocation()");
 #endif
 	if (loc == -1) return false;
 
@@ -465,7 +492,8 @@ bool GLProgram::UseTexture(const string &name, int texunit)
 {
 	GLint loc = glGetUniformLocation(id, name.c_str());
 #ifndef NDEBUG
-	GLUtility::CheckOpenGLError("GLProgram: UseTexture() - glGetUniformLocation()");
+	GLUtility::CheckOpenGLError(
+		"GLProgram: UseTexture() - glGetUniformLocation()");
 #endif
 	if (loc == -1) return false;
 
@@ -514,7 +542,10 @@ std::vector<GLAttributeInfo> GLProgram::GetActiveAttributes()
 	// Check if program is OK first
 	if (!IsOk())
 	{
-		cerr << "GLProgram: Program not ok, can't enumerate attributes..." << endl;
+#ifndef NDEBUG
+		cerr << "GLProgram: Program not ok, can't enumerate attributes..." 
+			<< endl;
+#endif
 		return attribs;
 	}
 
@@ -524,7 +555,8 @@ std::vector<GLAttributeInfo> GLProgram::GetActiveAttributes()
 	int maxAttribNameLength;
 	glGetProgramiv(id, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxAttribNameLength);
 #ifndef NDEBUG
-	GLUtility::CheckOpenGLError("GLProgram: Getting number of active attributes");
+	GLUtility::CheckOpenGLError(
+		"GLProgram: Getting number of active attributes");
 #endif
 
 	// Temporary buffer for attribute names
@@ -537,7 +569,8 @@ std::vector<GLAttributeInfo> GLProgram::GetActiveAttributes()
 	for (int i = 0; i < numAttribs; ++i)
 	{
 		// Get attrib info
-		glGetActiveAttrib(id, i, maxAttribNameLength, &length, &size, &type, name);
+		glGetActiveAttrib(id, i, maxAttribNameLength, 
+			&length, &size, &type, name);
 		// Add to list
 		GLAttributeInfo attrib;
 		attrib.size = size;
@@ -562,7 +595,10 @@ std::vector<GLUniformInfo> GLProgram::GetActiveUniforms()
 	// Check if program is OK first
 	if (!IsOk())
 	{
-		cerr << "GLProgram: Program not ok, can't enumerate uniforms..." << endl;
+#ifndef NDEBUG
+		cerr << "GLProgram: Program not ok, can't enumerate uniforms..." 
+			<< endl;
+#endif
 		return uniforms;
 	}
 
@@ -572,7 +608,8 @@ std::vector<GLUniformInfo> GLProgram::GetActiveUniforms()
 	int maxUniformNameLength;
 	glGetProgramiv(id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUniformNameLength);
 #ifndef NDEBUG
-	GLUtility::CheckOpenGLError("GLProgram: Getting number of active uniforms");
+	GLUtility::CheckOpenGLError(
+		"GLProgram: Getting number of active uniforms");
 #endif
 
 	// Temporary buffer for uniform names
@@ -585,7 +622,8 @@ std::vector<GLUniformInfo> GLProgram::GetActiveUniforms()
 	for (int i = 0; i < numUniforms; ++i)
 	{
 		// Get uniform info
-		glGetActiveUniform(id, i, maxUniformNameLength, &length, &size, &type, name);
+		glGetActiveUniform(id, i, maxUniformNameLength, 
+			&length, &size, &type, name);
 		// Add to list
 		GLUniformInfo uniform;
 		uniform.size = size;

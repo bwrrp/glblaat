@@ -1,9 +1,11 @@
 #pragma once
 #include "GLRenderTexture2D.h"
 
-class GLRenderTexture2DRectangle : public GLRenderTexture2D {
+class GLRenderTexture2DRectangle : public GLRenderTexture2D 
+{
 public:
-	static GLRenderTexture2DRectangle *New(int width, int height, int internalformat, int format, int type);
+	static GLRenderTexture2DRectangle *New(int width, int height, 
+		int internalformat, int format, int type);
 
 	virtual ~GLRenderTexture2DRectangle();
 

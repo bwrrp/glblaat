@@ -1,15 +1,17 @@
 #include "GLTexture3D.h"
 #include "GLTextureRectangle.h"
 
-#include <iostream>
 #include "GLUtility.h"
+
+#ifndef NDEBUG
+#include <iostream>
+#endif
 
 using namespace std;
 
 // ----------------------------------------------------------------------------
 GLTexture3D *GLTexture3D::New(int width, int height, int depth, 
-							  int internalformat, int format, int type, 
-							  void *data) 
+	int internalformat, int format, int type, void *data) 
 {
 	// Check if width and height are powers of two
     unsigned int xs = static_cast<unsigned int>(width);
@@ -20,22 +22,26 @@ GLTexture3D *GLTexture3D::New(int width, int height, int depth,
 		// Non-power-of-two sizes, check available extensions
 		if (GLEW_ARB_texture_non_power_of_two) 
 		{
-			cout << "GLTexture: sizes are not powers of two, creating NPOTS texture" << endl;
-			GLTexture3D *tex = new GLTexture3D(width, height, depth, internalformat);
+			GLTexture3D *tex = new GLTexture3D(
+				width, height, depth, internalformat);
 			if (!tex->Allocate(format, type, data)) 
 			{
 				delete tex;
 				return 0;
 			}
 			return tex;
-		} 
-		cerr << "GLTexture: non-power-of-two sized textures not supported" << endl;
+		}
+#ifndef NDEBUG
+		cerr << "GLTexture: non-power-of-two sized textures not supported" 
+			<< endl;
+#endif
 		return 0;
 	} 
 	else 
 	{
 		// Create a normal texture
-		GLTexture3D *tex = new GLTexture3D(width, height, depth, internalformat);
+		GLTexture3D *tex = new GLTexture3D(
+			width, height, depth, internalformat);
 		if (!tex->Allocate(format, type, data)) 
 		{
 			delete tex;
@@ -49,19 +55,16 @@ GLTexture3D *GLTexture3D::New(int width, int height, int depth,
 GLTexture3D::GLTexture3D(int width, int height, int depth, int internalformat)
 : GLTexture(width, height, internalformat), depth(depth)
 {
-	//cout << "GLTexture3D: Constructor" << endl;
 }
 
 // ----------------------------------------------------------------------------
 GLTexture3D::~GLTexture3D() 
 {
-	//cout << "GLTexture3D: Destructor" << endl;
 }
 
 // ----------------------------------------------------------------------------
 bool GLTexture3D::Allocate(int format, int type, void *data) 
 {
-	//cout << "GLTexture3D: Allocate" << endl;
 	// Store old binding to avoid messing up the state
 	glPushAttrib(GL_TEXTURE_BIT);
 
@@ -89,7 +92,10 @@ bool GLTexture3D::Allocate(int format, int type, void *data)
 	bool eflag = GLUtility::GetErrorFlag();
 	if (w == 0 || eflag) 
 	{
-		cerr << "GLTexture3D: Proxy allocation failed, may be out of video memory" << endl;
+#ifndef NDEBUG
+		cerr << "GLTexture3D: Proxy allocation failed, out of video memory?" 
+			<< endl;
+#endif
 		UnbindCurrent();
 		glPopAttrib();
 		return false;
@@ -105,7 +111,10 @@ bool GLTexture3D::Allocate(int format, int type, void *data)
 
 	if (GLUtility::GetErrorFlag()) 
 	{
-		cerr << "GLTexture3D: An OpenGL error occurred while allocating the texture" << endl;
+#ifndef NDEBUG
+		cerr << "GLTexture3D: An error occurred while allocating the texture" 
+			<< endl;
+#endif
 		GLUtility::ClearOpenGLError();
 		return false;
 	}

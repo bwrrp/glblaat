@@ -15,7 +15,7 @@ GLRenderTexture3DLayer *GLRenderTexture3DLayer::New(
 
 // ----------------------------------------------------------------------------
 GLRenderTexture3DLayer::GLRenderTexture3DLayer(GLTexture3D *tex, int layer)
-	: GLRendertarget(tex->GetWidth(), tex->GetHeight()), tex(tex), layer(layer)
+: GLRendertarget(tex->GetWidth(), tex->GetHeight()), tex(tex), layer(layer)
 {
 }
 
