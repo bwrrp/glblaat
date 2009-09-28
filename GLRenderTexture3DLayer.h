@@ -3,7 +3,8 @@
 #include "GLTexture3D.h"
 #include "GL.h"
 
-class GLRenderTexture3DLayer : public GLRendertarget {
+class GLRenderTexture3DLayer : public GLRendertarget 
+{
 public:
 	static GLRenderTexture3DLayer *New(GLTexture3D *tex, int layer);
 

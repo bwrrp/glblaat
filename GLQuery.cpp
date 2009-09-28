@@ -1,8 +1,10 @@
 #include "GLQuery.h"
 
 #include "GLUtility.h"
+
+#ifndef NDEBUG
 #include <iostream>
-#include <cassert>
+#endif
 
 using namespace std;
 

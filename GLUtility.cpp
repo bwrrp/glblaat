@@ -1,11 +1,15 @@
-#include "GLUtility.h"
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <cassert>
 #include "GL.h"
+#include "GLUtility.h"
 #include "GLTexture.h"
 #include "GLTextureRectangle.h"
+
+#include <fstream>
+#include <sstream>
+#include <cassert>
+
+#ifndef NDEBUG
+#include <iostream>
+#endif
 
 using namespace std;
 
@@ -21,8 +25,7 @@ GLUtility::~GLUtility()
 
 // ----------------------------------------------------------------------------
 GLTexture *GLUtility::GrabColorBuffer(int vpx, int vpy, 
-									  int vpwidth, int vpheight, 
-									  GLTexture *oldtex) 
+	int vpwidth, int vpheight, GLTexture *oldtex) 
 {
 	// Can we use an existing texture?
 	GLTexture *tex = oldtex;
@@ -34,7 +37,10 @@ GLTexture *GLUtility::GrabColorBuffer(int vpx, int vpy,
 			GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 		if (!tex)
 		{
-			cerr << "GLUtility: GrabColorBuffer failed to create texture!" << endl;
+#ifndef NDEBUG
+			cerr << "GLUtility: GrabColorBuffer failed to create texture!" 
+				<< endl;
+#endif
 			return tex;
 		}
 
@@ -62,8 +68,7 @@ GLTexture *GLUtility::GrabColorBuffer(int vpx, int vpy,
 
 // ----------------------------------------------------------------------------
 GLTextureRectangle *GLUtility::GrabColorBufferRectangle(int vpx, int vpy, 
-														int vpwidth, int vpheight, 
-														GLTextureRectangle *oldtex) 
+	int vpwidth, int vpheight, GLTextureRectangle *oldtex) 
 {
 	// Can we use an existing texture?
 	GLTextureRectangle *tex = oldtex;
@@ -75,8 +80,10 @@ GLTextureRectangle *GLUtility::GrabColorBufferRectangle(int vpx, int vpy,
 			GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 		if (!tex)
 		{
-			cerr << "GLUtility: GrabColorBufferRectangle failed to create texture!" 
-				<< endl;
+#ifndef NDEBUG
+			cerr << "GLUtility: GrabColorBufferRectangle "
+				<< "failed to create texture!" << endl;
+#endif
 			return tex;
 		}
 
@@ -93,8 +100,7 @@ GLTextureRectangle *GLUtility::GrabColorBufferRectangle(int vpx, int vpy,
 
 // ----------------------------------------------------------------------------
 GLTexture *GLUtility::GrabDepthBuffer(int vpx, int vpy, 
-									  int vpwidth, int vpheight, 
-									  GLTexture *oldtex) 
+	int vpwidth, int vpheight, GLTexture *oldtex) 
 {
 	// Can we use an existing texture?
 	GLTexture *tex = oldtex;
@@ -119,7 +125,10 @@ GLTexture *GLUtility::GrabDepthBuffer(int vpx, int vpy,
 			GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);
 		if (!tex) 
 		{
-			cerr << "GLUtility: GrabDepthBuffer failed to create texture!" << endl;
+#ifndef NDEBUG
+			std::cerr << "GLUtility: GrabDepthBuffer "
+				<< "failed to create texture!" << std::endl;
+#endif
 			return tex;
 		}
 
@@ -147,8 +156,7 @@ GLTexture *GLUtility::GrabDepthBuffer(int vpx, int vpy,
 
 // ----------------------------------------------------------------------------
 GLTextureRectangle *GLUtility::GrabDepthBufferRectangle(int vpx, int vpy, 
-														int vpwidth, int vpheight, 
-														GLTextureRectangle *oldtex) 
+	int vpwidth, int vpheight, GLTextureRectangle *oldtex) 
 {
 	// Can we use an existing texture?
 	GLTextureRectangle *tex = oldtex;
@@ -173,8 +181,10 @@ GLTextureRectangle *GLUtility::GrabDepthBufferRectangle(int vpx, int vpy,
 			depthformat, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);
 		if (!tex) 
 		{
-			cerr << "GLUtility: GrabDepthBufferRectangle failed to create texture!" 
-				<< endl;
+#ifndef NDEBUG
+			cerr << "GLUtility: GrabDepthBufferRectangle "
+				<< "failed to create texture!" << endl;
+#endif
 			return tex;
 		}
 		
@@ -231,20 +241,31 @@ void GLUtility::CheckOpenGLError(const std::string &task)
 	ErrorFlag = false;
 
 	GLenum err = glGetError();
-	// Make sure we get all error flags before we continue, but don't loop more than 100 times
+	// Make sure we get all error flags before we continue, 
+	// but don't loop more than 10 times
+	const int MAX_REPEAT_ERROR = 10;
 	int i = 0;
-	while (err != GL_NO_ERROR && i < 10) {
+	while (err != GL_NO_ERROR && i < MAX_REPEAT_ERROR)
+	{
 		ErrorFlag = true;
-		const char *errstring = reinterpret_cast<const char*>(gluErrorString(err));
+#ifndef NDEBUG
+		const char *errstring = 
+			reinterpret_cast<const char*>(gluErrorString(err));
 		cerr << task << " FAILED (err[" << (i+1) << "]=" << err << 
 			", \"" << (errstring ? errstring : "???") << "\")" << endl;
-		//assert(false);
+#endif
+		assert(false);
+
 		err = glGetError();
 		++i;
-		if (i == 10) {
+		if (i == MAX_REPEAT_ERROR)
+		{
 			// This should not happen, but apparently it does
 			// glGetError should return 0 if it generates an error itself
-			cerr << "GLUtility: 10 consecutive errors reached, are you missing a glEnd()?";
+#ifndef NDEBUG
+			cerr << "GLUtility: 10 consecutive errors reached, "
+				<< "are you missing a glEnd()?" << std::endl;
+#endif
 		}
 	}
 }
@@ -253,13 +274,19 @@ void GLUtility::CheckOpenGLError(const std::string &task)
 void GLUtility::ClearOpenGLError() 
 {
 	// Loop until there are no more errors
+	const int MAX_REPEAT_ERROR = 10;
 	int i = 0;
-	while (glGetError() != GL_NO_ERROR && i < 10) { 
+	while (glGetError() != GL_NO_ERROR && i < MAX_REPEAT_ERROR)
+	{ 
 		++i;
-		if (i == 10) {
+		if (i == MAX_REPEAT_ERROR)
+		{
 			// This should not happen, but apparently it does
 			// glGetError should return 0 if it generates an error itself
-			cerr << "GLUtility: 10 consecutive errors reached, are you missing a glEnd()?";
+#ifndef NDEBUG
+			cerr << "GLUtility: 10 consecutive errors reached, "
+				<< "are you missing a glEnd()?" << std::endl;
+#endif
 		}
 	}
 	ErrorFlag = false;

@@ -3,9 +3,11 @@
 #include "GLTexture.h"
 #include "GL.h"
 
-class GLRenderTexture2D : public GLRendertarget {
+class GLRenderTexture2D : public GLRendertarget 
+{
 public:
-	static GLRenderTexture2D *New(int width, int height, int internalformat, int format, int type);
+	static GLRenderTexture2D *New(int width, int height, 
+		int internalformat, int format, int type);
 
 	virtual ~GLRenderTexture2D();
 

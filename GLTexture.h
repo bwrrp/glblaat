@@ -8,7 +8,8 @@ public:
 	friend class GLRenderTexture2D;
 
 	// Factory for textures
-	static GLTexture *New(int width, int height, int internalformat, int format, int type, void *data);
+	static GLTexture *New(int width, int height, 
+		int internalformat, int format, int type, void *data);
 
 	virtual ~GLTexture();
 

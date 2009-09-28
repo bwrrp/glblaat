@@ -5,8 +5,13 @@
 #include "GLRenderTexture2D.h"
 #include "GLRenderTexture2DRectangle.h"
 
-#include <iostream>
 #include "GLUtility.h"
+
+#ifndef NDEBUG
+#include <iostream>
+#endif
+
+#include <cassert>
 
 using namespace std;
 
@@ -18,7 +23,9 @@ GLFramebuffer* GLFramebuffer::New(int width, int height)
 	if (!GLEW_EXT_framebuffer_object) 
 	{
 		// Oops, not supported
+#ifndef NDEBUG
 		cerr << "GLFramebuffer: Framebuffer objects not supported!" << endl;
+#endif
 		return 0;
 	}
 
@@ -31,7 +38,6 @@ GLFramebuffer::GLFramebuffer(int width, int height)
 : id(0), width(width), height(height), bound(false) 
 {
 	// Create the framebuffer
-	//cout << "GLFramebuffer: Constructor" << endl;
 	glGenFramebuffersEXT(1, &id);
 #ifndef NDEBUG
 	GLUtility::CheckOpenGLError("GLFramebuffer: glGenFramebuffersEXT()");
@@ -41,10 +47,9 @@ GLFramebuffer::GLFramebuffer(int width, int height)
 // ----------------------------------------------------------------------------
 GLFramebuffer::~GLFramebuffer() 
 {
-	//cout << "GLFramebuffer: Destructor" << endl;
-	
 	// Delete all attachments
-	for (map<int, GLRendertarget*>::iterator i = attachments.begin(); i != attachments.end(); ) 
+	for (map<int, GLRendertarget*>::iterator i = attachments.begin(); 
+		i != attachments.end(); ) 
 	{
 		int attachment = i->first;
 		i++;
@@ -62,7 +67,8 @@ GLFramebuffer::~GLFramebuffer()
 }
 
 // ----------------------------------------------------------------------------
-GLRendertarget *GLFramebuffer::AttachRendertarget(int attachment, GLRendertarget *rt) 
+GLRendertarget *GLFramebuffer::AttachRendertarget(
+	int attachment, GLRendertarget *rt) 
 {
 	if (!rt)
 	{
@@ -75,7 +81,8 @@ GLRendertarget *GLFramebuffer::AttachRendertarget(int attachment, GLRendertarget
 }
 
 // ----------------------------------------------------------------------------
-GLRendertarget *GLFramebuffer::AttachRendertarget(int attachment, GLRendertarget &rt) 
+GLRendertarget *GLFramebuffer::AttachRendertarget(
+	int attachment, GLRendertarget &rt) 
 {
 	if (!bound) Bind();
 
@@ -95,7 +102,7 @@ GLRendertarget* GLFramebuffer::DetachRendertarget(int attachment)
 {
 	if (!bound) Bind();
 
-	// Release the old render target (if any) to the caller and remove it from the map
+	// Release an old render target to the caller and remove it from the map
 	GLRendertarget *rt = 0;
 	map<int, GLRendertarget*>::iterator it = attachments.find(attachment);
 	if (it != attachments.end()) 
@@ -136,7 +143,8 @@ bool GLFramebuffer::CreatePackedDepthStencilBuffer()
 {
 	if (!GLEW_EXT_packed_depth_stencil) return false;
 
-	GLRendertarget *dsb = GLRenderbuffer::New(width, height, GL_DEPTH24_STENCIL8_EXT);
+	GLRendertarget *dsb = GLRenderbuffer::New(
+		width, height, GL_DEPTH24_STENCIL8_EXT);
 	// Attach as depth buffer
 	GLRendertarget *old = AttachRendertarget(GL_DEPTH_ATTACHMENT_EXT, *dsb);
 	if (old)
@@ -160,7 +168,8 @@ bool GLFramebuffer::CreatePackedDepthStencilTexture()
 	if (!GLEW_ARB_depth_texture && !GLEW_SGIX_depth_texture) return false;
 
 	GLRendertarget *dsb = GLRenderTexture2D::New(width, height, 
-		GL_DEPTH24_STENCIL8_EXT, GL_DEPTH_STENCIL_EXT, GL_UNSIGNED_INT_24_8_EXT);
+		GL_DEPTH24_STENCIL8_EXT, GL_DEPTH_STENCIL_EXT, 
+		GL_UNSIGNED_INT_24_8_EXT);
 	// Attach as depth buffer
 	GLRendertarget *old = AttachRendertarget(GL_DEPTH_ATTACHMENT_EXT, *dsb);
 	if (old)
@@ -185,7 +194,8 @@ bool GLFramebuffer::CreatePackedDepthStencilTextureRectangle()
 	if (!GLEW_ARB_depth_texture && !GLEW_SGIX_depth_texture) return false;
 
 	GLRendertarget *dsb = GLRenderTexture2DRectangle::New(width, height, 
-		GL_DEPTH24_STENCIL8_EXT, GL_DEPTH_STENCIL_EXT, GL_UNSIGNED_INT_24_8_EXT);
+		GL_DEPTH24_STENCIL8_EXT, GL_DEPTH_STENCIL_EXT, 
+		GL_UNSIGNED_INT_24_8_EXT);
 	// Attach as depth buffer
 	GLRendertarget *old = AttachRendertarget(GL_DEPTH_ATTACHMENT_EXT, *dsb);
 	if (old)
@@ -219,8 +229,7 @@ bool GLFramebuffer::CreateColorBuffer(int attachment, int format)
 
 // ----------------------------------------------------------------------------
 bool GLFramebuffer::CreateColorTexture(int attachment, 
-									   int internalformat, 
-									   int format, int type)
+	int internalformat, int format, int type)
 {
 	GLRendertarget *buffer = GLRenderTexture2D::New(
 		width, height, internalformat, format, type);
@@ -236,8 +245,7 @@ bool GLFramebuffer::CreateColorTexture(int attachment,
 
 // ----------------------------------------------------------------------------
 bool GLFramebuffer::CreateColorTextureRectangle(int attachment, 
-												int internalformat, 
-												int format, int type)
+	int internalformat, int format, int type)
 {
 	if (!GLEW_ARB_texture_rectangle) return false;
 
@@ -256,11 +264,8 @@ bool GLFramebuffer::CreateColorTextureRectangle(int attachment,
 // ----------------------------------------------------------------------------
 void GLFramebuffer::Bind()  
 {
-	if (bound) 
-	{
-		cerr << "GLFramebuffer: Bind() called, but framebuffer was already bound" << endl;
-		return;
-	}
+	assert(!bound);
+	if (bound) return;
 
 	// Store old viewport
 	glPushAttrib(GL_VIEWPORT_BIT);
@@ -277,17 +282,13 @@ void GLFramebuffer::Bind()
 // ----------------------------------------------------------------------------
 void GLFramebuffer::Unbind() 
 {
+	assert(bound);
+	if (!bound) return;
+
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 	
-	if (bound) 
-	{
-		// Restore viewport
-		glPopAttrib();
-	} 
-	else 
-	{
-		cerr << "GLFramebuffer: Unbind() called, but framebuffer was not bound" << endl;
-	}
+	// Restore viewport
+	glPopAttrib();
 
 	bound = false;
 
@@ -338,9 +339,11 @@ GLTexture* GLFramebuffer::GetTexture2D(int attachment)
 const GLTexture* GLFramebuffer::GetTexture2D(int attachment) const
 {
 	// Look up the texture, return 0 if nothing's attached
-	map<int, GLRendertarget*>::const_iterator atit = attachments.find(attachment);
+	map<int, GLRendertarget*>::const_iterator atit = 
+		attachments.find(attachment);
 	if (atit == attachments.end()) return 0;
-	const GLRenderTexture2D *rt = dynamic_cast<const GLRenderTexture2D*>(atit->second);
+	const GLRenderTexture2D *rt = 
+		dynamic_cast<const GLRenderTexture2D*>(atit->second);
 	if (!rt) return 0;
 	// Return texture
 	return rt->GetTexture();
@@ -352,8 +355,11 @@ bool GLFramebuffer::Resize(int width, int height)
 	// Ignore unnecessary calls
 	if (this->width == width && this->height == height) return true;
 
+	bool ok = true;
+
 	// Resize all attachments
-	for (map<int, GLRendertarget*>::iterator i = attachments.begin(); i != attachments.end(); ) 
+	for (map<int, GLRendertarget*>::iterator i = attachments.begin(); 
+		i != attachments.end(); ) 
 	{
 		int attachment = i->first;
 		i++;
@@ -361,12 +367,17 @@ bool GLFramebuffer::Resize(int width, int height)
 		GLRendertarget *rt = DetachRendertarget(attachment);
 		if (!rt->Resize(width, height))
 		{
-			cerr << "GLFrameBuffer: Resize failed for attachment " << attachment << endl;
+#ifndef NDEBUG
+			cerr << "GLFrameBuffer: Resize failed for attachment " 
+				<< attachment << endl;
+#endif
+			// Try to continue without this attachment (caller's decision)
 			delete rt;
-			return false;
+			rt = 0;
+			ok = false;
 		}
 		// Re-attach the rendertarget
-		AttachRendertarget(attachment, *rt);
+		if (rt) AttachRendertarget(attachment, *rt);
 	}
 
 	// Update framebuffer size
@@ -376,5 +387,5 @@ bool GLFramebuffer::Resize(int width, int height)
 	// Unbind the framebuffer if bound
 	if (bound) Unbind();
 
-	return true;
+	return ok;
 }

@@ -16,8 +16,10 @@ public:
 	typedef int SamplerId;
 	static const SamplerId BAD_SAMPLER_ID = -1;
 
-	// Add a new sampler with the given name and initial texture, optionally add to store
-	SamplerId AddTexture(const std::string &name, GLTexture *tex, bool takeOwnership = true);
+	// Add a new sampler with the given name and texture, 
+	// optionally add to store
+	SamplerId AddTexture(const std::string &name, GLTexture *tex, 
+		bool takeOwnership = true);
 	// Get the sampler with the given name
 	SamplerId GetSampler(const std::string &name);
 	// Swap the texture assigned to the given sampler, returns the old texture
@@ -25,18 +27,20 @@ public:
 	// Unregister the given name as a sampler
 	void RemoveSampler(const std::string &name);
 
-	// Specify that the given unit is managed elsewhere, but can be used by programs as name
+	// Specify that the given unit is managed elsewhere, but should be 
+	// registered on programs using the given name
 	bool AddReservedSlot(const std::string &name, int unit);
 
 	// Get a texture from the store
 	GLTexture *GetTexture(const std::string &name);
 	const GLTexture *GetTexture(const std::string &name) const;
-	// Remove a texture from the store (transfer ownership to caller), or delete a reserved slot
+	// Remove and return a texture from the store, or delete a reserved slot
 	GLTexture *RemoveTexture(const std::string &name);
 	// Delete a texture from the store, or delete a reserved slot
 	void DeleteTexture(const std::string &name);
 
-	// Set the specified program as current, analyze required textures if not cached
+	// Set the specified program as current, and setup its textures
+	// optionally refresh the cache for this program
 	bool SetupProgram(GLProgram *prog, bool updateIfKnown = false);
 	// Remove the specified program from the cache
 	void UnregisterProgram(GLProgram *prog);
