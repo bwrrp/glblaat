@@ -1,26 +1,13 @@
 #pragma once
 #include "GLResource.h"
 #include "GL.h"
-#include <string>
+#include "GLShaderInfo.h"
+
 #include <set>
+#include <string>
 #include <vector>
 
 class GLShader;
-
-struct GLAttributeInfo
-{
-	int size;
-	unsigned int type;
-	std::string name;
-	int index;
-};
-
-struct GLUniformInfo
-{
- 	int size;
- 	unsigned int type; 
-	std::string name;
-};
 
 class GLProgram : public GLResource 
 {
