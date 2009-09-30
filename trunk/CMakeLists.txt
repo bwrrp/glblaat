@@ -13,30 +13,20 @@ SET( OpenGL_lib
 )
 
 # GLEW
-IF( WIN32 )
-    IF( CYGWIN )
-        FIND_LIBRARY( GLEW_lib 
-            NAMES libGLEW GLEW glew32
-            PATHS /usr/lib /usr/lib/w32api
-        )
-    ELSE( CYGWIN )
-        # FIND_LIBRARY does not seem to work here (or maybe we need the paths...)
-        SET( GLEW_lib
-            glew32.lib
-        )
-    ENDIF( CYGWIN )
-ELSE( WIN32 )
-    FIND_LIBRARY( GLEW_lib
-        NAMES libGLEW GLEW glew32
-        PATHS /usr/lib /usr/local/lib
-    )
-ENDIF( WIN32 )
-
-# The complete set of libraries required by the project
-SET( ${ProjectName}_Libraries
-    ${OpenGL_lib}
-    ${GLEW_lib}
-)
+IF (WIN32)
+	FIND_PATH( GLEW_INCLUDE_PATH GL/glew.h
+		$ENV{PROGRAMFILES}/GLEW/include
+		DOC "The directory where GL/glew.h resides")
+ELSE (WIN32)
+	FIND_PATH( GLEW_INCLUDE_PATH GL/glew.h
+		/usr/include
+		/usr/local/include
+		/sw/include
+		/opt/local/include
+		DOC "The directory where GL/glew.h resides")
+ENDIF (WIN32)
+INCLUDE_DIRECTORIES( ${GLEW_INCLUDE_PATH} )
+ADD_DEFINITIONS( -DGLEW_STATIC )
 
 # --------------------------------------------------
 # Modules
@@ -164,7 +154,6 @@ ENDMACRO( collect_class_source_files )
 
 SET( ${ProjectName}_Headers )
 SET( ${ProjectName}_Source ${${ProjectName}_ExtraSource} )
-SET( ${ProjectName}_GeneratedSource )
 
 # Iterate over the modules
 LIST( LENGTH ${ProjectName}_Modules nmodules )
@@ -184,7 +173,6 @@ FOREACH( i RANGE ${nmodules} )
         # Iterate over classes
         SET( ${ProjectName}_${module}_Headers )
         SET( ${ProjectName}_${module}_Source )
-        SET( ${ProjectName}_${module}_GeneratedSource )
 
         FOREACH( class ${${ProjectName}_${module}_Classes} )
             collect_class_source_files( 
@@ -197,7 +185,6 @@ FOREACH( i RANGE ${nmodules} )
     ENDIF( EXISTS ${cmakeincludefile} )
 
     # Create source group for this module
-    # Generated sources don't need to show up in this group, headers do
     SOURCE_GROUP( ${modulename} 
         FILES ${${ProjectName}_${module}_Source} ${${ProjectName}_${module}_Headers} 
     )
@@ -211,22 +198,7 @@ FOREACH( i RANGE ${nmodules} )
         ${${ProjectName}_${module}_Source} 
         ${${ProjectName}_${module}_Headers} # Add headers as well
     )
-    SET( ${ProjectName}_GeneratedSource
-        ${${ProjectName}_GeneratedSource}
-        ${${ProjectName}_${module}_GeneratedSource}
-    )
 ENDFOREACH( i )
-
-# Add generated sources and give them a source group
-SET( ${ProjectName}_Source
-    ${${ProjectName}_Source}
-    ${${ProjectName}_GeneratedSource}
-)
-SOURCE_GROUP( "Generated files"
-    FILES ${${ProjectName}_GeneratedSource}
-)
-
-#INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} )
 
 # --------------------------------------------------
 # Library target
@@ -234,9 +206,4 @@ SOURCE_GROUP( "Generated files"
 ADD_LIBRARY( 
     ${ProjectName} STATIC
     ${${ProjectName}_Source}
-)
-
-TARGET_LINK_LIBRARIES(
-    ${ProjectName} 
-    ${${ProjectName}_Libraries}
 )
