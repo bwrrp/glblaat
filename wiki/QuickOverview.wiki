@@ -1,0 +1,87 @@
+#summary a quick overview of the classes available in the GLBlaat library
+#labels Featured,Phase-Implementation
+
+= Introduction =
+
+Although OpenGL and its extensions present various interfaces based on "objects", it is still a C library. In plain OpenGL, such objects therefore have to be created using normal functions, and manipulated by first binding them to targets and then calling other functions.
+
+GLBlaat aims to simplify OpenGL development by providing C++ classes for several commonly used types of GL objects. This not only simplifies object management, but also helps you to quickly find the functions needed to do what you want.
+
+= Getting started =
+
+This page is about using GLBlaat in your projects. Refer to the GettingStarted page for instructions on how to build the GLBlaat library.
+
+== Headers ==
+
+GLBlaat is aimed at cross-platform development. The GL headers vary a little between platforms. GLBlaat contains a single header `GL.h` which sets up everything for your platform. Include this before anything else. The headers to include for specific bits of GLBlaat functionality are listed in the sections below.
+
+== Initializing ==
+
+As GLBlaat uses GLEW internally, you should initialize GLEW as soon as you have a GL context, before using any GLBlaat functionality. This is done as follows:
+{{{
+if (glewInit() != GLEW_OK)
+{
+	std::cerr << "Failed to initialize GLEW!";
+	return;
+}
+}}}
+
+== Using multiple OpenGL contexts ==
+
+GLBlaat does not currently contain logic for dealing with multiple OpenGL contexts. It is your responsibility to *only use GLBlaat objects in the context in which they were created*. Alternatively, many platforms provide functionality to share textures and other resources between GL contexts. Refer to your platform documentation for more details.
+
+= GLBlaat classes =
+
+Documentation on GLBlaat is a bit sparse at the moment, and will be extended in the future. Below is a quick overview, refer to the headers and source for more information.
+
+== Texturing ==
+
+Three classes are included, representing different types of textures. Include the respective header file to use them.
+
+ * GLTexture
+ * GLTextureRectangle
+ * GLTexture3D
+
+Textures are created by calling their static New method specifying size, type and optionally the texture's initial data. The method returns null if anything goes wrong.
+
+Use a texture by calling `BindToCurrent` to bind it to its target. The target used can be obtained by calling `GetTextureTarget`.
+
+== Framebuffer objects ==
+
+Include `GLFramebuffer.h` to use. A framebuffer object can be created using the static `New` method specifying its size. Create attachments manually using the `GLRenderbuffer` / `GLRenderTexture*` classes and attach them with `AttachRenderTarget`. Alternatively, use one of the `Create*` utility methods on the GLFramebuffer class to simplify your code (recommended).
+
+The `GLRenderTexture*` classes can be used to render to a texture. You can get the internal `GLTexture` from a `GLRenderTexture` by calling its `GetTexture` method, or by calling `GetTexture2D` on the framebuffer object and specifying the right attachment. The `GLRenderTexture3DLayer` class, used for rendering to a single layer of a 3D texture, is an exception, and requires a 3D texture to be provided when it is created.
+
+Check if the framebuffer object is valid by calling its `IsOk` method. Calling `Bind` will start rendering to the framebuffer, calling `Unbind` will resume rendering to the GL window. A framebuffer object is bound after creation, so call `Unbind` if you don't want to use it immediately.
+
+A framebuffer can be resized by calling its Resize method. All attachments will be resized automatically.
+
+== GLSL shaders ==
+
+Include `GLProgram.h` to use. A GLSL shader consists of a shader program and one or more shader objects.
+
+Create the program using `GLProgram`'s static `New` method. Add GLSL shader source code using the `AddVertexShader`, `AddGeometryShader` and/or `AddFragmentShader` methods. These will each return a boolean indicating whether compilation of the GLSL code was successful.
+
+Link the shader program by calling its `Link` method, which will again return a boolean indicating success. The status can also be queried using `IsOk`. If anything fails, use `GetInfoLogs` to get the logs explaining the problem. Compilation or linker warnings will not cause false to be returned, but may still show up in the info log.
+
+Call `Start` to start using the shader. Shader uniforms can be set once the shader is active. Call `Stop` to return to fixed function rendering.
+
+== Vertex and pixel buffer objects ==
+
+Use `GLBuffer.h` for a VBO, or `GLPixelBuffer.h` if you (also) plan to use it as a PBO. Methods are provided to set all or part of the buffer's data, to map the buffer to memory and to bind it for different purposes. Remember to set appropriate data pointers using the normal OpenGL pointer functions.
+
+== Asynchronous queries ==
+
+Use `GLOcclusionQuery.h` for occlusion queries, or `GLTimerQuery.h` for timer queries. Use `Start` and `Stop` to control the measurement, and use the `GetResult*` methods to obtain the results.
+
+== Utility classes ==
+
+Include their headers to use these.
+
+*GLTextureManager*
+
+The GLBlaat texture manager simplifies keeping track of texture objects and using them in GLSL shaders. The latter is done by using the class to register one or more samplers, which can be assigned a name and texture. A shader program can then be configured by calling `SetupProgram`. This will automatically detect the sampler names used by the shader code, set up the relevant texture bindings and communicate this information to the program. Calling `Bind` will activate these textures for rendering. After rendering, call `Unbind` to clean up the OpenGL state.
+
+*GLUtility*
+
+Provides various useful functions. The `Grab*` methods can be used to copy the current framebuffer (or part thereof) to a texture, and can be used as a (slower) alternative when framebuffer objects are not available. The `*Error*` functions assist in debugging by performing error checking and reporting on the results.
