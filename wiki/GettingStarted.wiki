@@ -1,0 +1,38 @@
+#summary instructions on how to compile the GLBlaat library
+#labels Featured,Phase-Deploy
+
+= Getting started =
+
+GLBlaat is a pretty simple library; the only dependency is a recent version of GLEW. It's best to get a source version of GLEW from http://glew.sourceforge.net/ and build it using the instructions on that website, although if your platform includes GLEW you can try using that as well.
+
+For easy building on all supported platforms, GLBlaat uses CMake to generate its project files. Get CMake from http://cmake.org/ and install it.
+
+= Building the library =
+
+It's probably easiest to build GLBlaat as part of your application. If you are using CMake, just check out the GLBlaat source somewhere in your project tree and use an `add_subdirectory` command in your `CMakeLists.txt` to include it. If you just want to build the library, use the following instructions:
+
+== Linux ==
+
+ * Check out the source tree somewhere. See the Source tab for instructions.
+ * It's recommended to use a separate build directory for CMake projects. Create one, then navigate to it in your terminal.
+ * Use CMake to generate the makefile by running ccmake with your source directory as its argument:
+{{{
+$ cd glblaat_build
+$ ccmake ../glblaat
+}}}
+ * In ccmake, press `c` to configure. If CMake can't find GLEW, manually set the `GLEW_INCLUDE_PATH` variable to point to the GLEW include directory (containing the `GL` directory with `glew.h` inside). Press `c` again to confirm the settings, then press `g` to generate the makefile.
+ * Use `make` to build the library.
+
+== Windows ==
+
+ * Check out the source tree somewhere. See the Source tab for instructions.
+ * It's recommended to use a separate build directory. Create one.
+ * Start CMake (cmake-gui) from the start menu and point it to your source and build directories.
+ * Press Configure and choose your compiler from the list. If CMake can't find GLEW, manually set the `GLEW_INCLUDE_PATH` variable to point to the GLEW include directory (containing the `GL` directory with `glew.h` inside). Press Configure again to confirm the settings, then press Generate to generate the project files for your compiler.
+ * Open the generated project files and build the library using your compiler.
+
+= If you are using Visual Studio... =
+
+If you are using Visual Studio to compile your projects, you should make sure all projects making up your executables use the same version of the Visual C runtime libraries. In the case of a GLBlaat project, make sure both GLEW and GLBlaat have the same settings under `Project > Properties > C/C++ > Code Generation > Runtime Library`. Make sure to check this value for each build configuration you plan to use. 
+
+*If you get warnings about using /NODEFAULTLIB you are probably mixing different runtimes (a bad thing).*
