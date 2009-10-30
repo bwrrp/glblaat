@@ -1,8 +1,7 @@
-//////////////////////////////////////////////////////////////////////////////
-/// \file GL.h
-/// \brief OpenGL header collection.
-/// 
-/// Include this file to include all standard GL headers.
+// Copyright (c) 2009 Stef Busking
+// Distributed under the terms of the MIT License.
+
+// Include this file to include all standard GL headers.
 
 #pragma once
 
