@@ -1,3 +1,6 @@
+// Copyright (c) 2009 Stef Busking
+// Distributed under the terms of the MIT License.
+
 #include "GLRenderTexture2DRectangle.h"
 #include "GLTextureRectangle.h"
 

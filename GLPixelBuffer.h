@@ -1,3 +1,6 @@
+// Copyright (c) 2009 Stef Busking
+// Distributed under the terms of the MIT License.
+
 #pragma once
 #include "GLBuffer.h"
 #include "GL.h"
