@@ -367,7 +367,7 @@ bool GLTextureManager::SetupProgram(GLProgram *prog, bool updateIfKnown)
 		binding.resize(maxTextureUnits, -1);
 
 		// For finding available texture units
-		unsigned int nextFreeUnit = 0;
+		int nextFreeUnit = 0;
 		std::vector<bool> inUse;
 		inUse.resize(maxTextureUnits, false);
 		// Mark all reserved slots
