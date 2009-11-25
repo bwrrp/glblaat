@@ -5,7 +5,9 @@
 
 // Abstract superclass for all GLBlaat resources.
 class GLResource 
-{ 
+{
+public:
+	virtual ~GLResource() {}
 protected:
-	GLResource() {}; // can not instantiate abstract class
+	GLResource() {} // can not instantiate abstract class
 };
