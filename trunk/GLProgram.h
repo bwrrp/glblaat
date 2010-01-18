@@ -39,10 +39,10 @@ public:
 	bool SetUniform4f(const std::string &name, 
 		float v1, float v2, float v3, float v4);
 
-	bool SetUniform1fv(const std::string &name, int num, float *v);
-	bool SetUniform2fv(const std::string &name, int num, float *v);
-	bool SetUniform3fv(const std::string &name, int num, float *v);
-	bool SetUniform4fv(const std::string &name, int num, float *v);
+	bool SetUniform1fv(const std::string &name, int num, const float *v);
+	bool SetUniform2fv(const std::string &name, int num, const float *v);
+	bool SetUniform3fv(const std::string &name, int num, const float *v);
+	bool SetUniform4fv(const std::string &name, int num, const float *v);
 
 	bool SetUniform1i(const std::string &name, int v1);
 	bool SetUniform2i(const std::string &name, int v1, int v2);

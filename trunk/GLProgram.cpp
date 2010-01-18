@@ -368,7 +368,7 @@ bool GLProgram::SetUniform4f(const string &name,
 }
 
 // ----------------------------------------------------------------------------
-bool GLProgram::SetUniform1fv(const string &name, int num, float *v) 
+bool GLProgram::SetUniform1fv(const string &name, int num, const float *v) 
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
 #ifndef NDEBUG
@@ -385,7 +385,7 @@ bool GLProgram::SetUniform1fv(const string &name, int num, float *v)
 }
 
 // ----------------------------------------------------------------------------
-bool GLProgram::SetUniform2fv(const string &name, int num, float *v) 
+bool GLProgram::SetUniform2fv(const string &name, int num, const float *v) 
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
 #ifndef NDEBUG
@@ -402,7 +402,7 @@ bool GLProgram::SetUniform2fv(const string &name, int num, float *v)
 }
 
 // ----------------------------------------------------------------------------
-bool GLProgram::SetUniform3fv(const string &name, int num, float *v) 
+bool GLProgram::SetUniform3fv(const string &name, int num, const float *v) 
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
 #ifndef NDEBUG
@@ -419,7 +419,7 @@ bool GLProgram::SetUniform3fv(const string &name, int num, float *v)
 }
 
 // ----------------------------------------------------------------------------
-bool GLProgram::SetUniform4fv(const string &name, int num, float *v) 
+bool GLProgram::SetUniform4fv(const string &name, int num, const float *v) 
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
 #ifndef NDEBUG
