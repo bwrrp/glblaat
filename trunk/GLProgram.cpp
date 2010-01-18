@@ -368,6 +368,74 @@ bool GLProgram::SetUniform4f(const string &name,
 }
 
 // ----------------------------------------------------------------------------
+bool GLProgram::SetUniform1fv(const string &name, int num, float *v) 
+{ 
+	GLint loc = glGetUniformLocation(id, name.c_str());
+#ifndef NDEBUG
+	GLUtility::CheckOpenGLError(
+		"GLProgram: SetUniform1fv() - glGetUniformLocation()");
+#endif
+	if (loc == -1) return false;
+
+	glUniform1fv(loc, num, v);
+#ifndef NDEBUG
+	GLUtility::CheckOpenGLError("GLProgram: glUniform1fv");
+#endif
+	return true;
+}
+
+// ----------------------------------------------------------------------------
+bool GLProgram::SetUniform2fv(const string &name, int num, float *v) 
+{ 
+	GLint loc = glGetUniformLocation(id, name.c_str());
+#ifndef NDEBUG
+	GLUtility::CheckOpenGLError(
+		"GLProgram: SetUniform2fv() - glGetUniformLocation()");
+#endif
+	if (loc == -1) return false;
+
+	glUniform2fv(loc, num, v);
+#ifndef NDEBUG
+	GLUtility::CheckOpenGLError("GLProgram: glUniform2fv");
+#endif
+	return true;
+}
+
+// ----------------------------------------------------------------------------
+bool GLProgram::SetUniform3fv(const string &name, int num, float *v) 
+{ 
+	GLint loc = glGetUniformLocation(id, name.c_str());
+#ifndef NDEBUG
+	GLUtility::CheckOpenGLError(
+		"GLProgram: SetUniform3fv() - glGetUniformLocation()");
+#endif
+	if (loc == -1) return false;
+
+	glUniform3fv(loc, num, v);
+#ifndef NDEBUG
+	GLUtility::CheckOpenGLError("GLProgram: glUniform3fv");
+#endif
+	return true;
+}
+
+// ----------------------------------------------------------------------------
+bool GLProgram::SetUniform4fv(const string &name, int num, float *v) 
+{ 
+	GLint loc = glGetUniformLocation(id, name.c_str());
+#ifndef NDEBUG
+	GLUtility::CheckOpenGLError(
+		"GLProgram: SetUniform4fv() - glGetUniformLocation()");
+#endif
+	if (loc == -1) return false;
+
+	glUniform4fv(loc, num, v);
+#ifndef NDEBUG
+	GLUtility::CheckOpenGLError("GLProgram: glUniform4fv");
+#endif
+	return true;
+}
+
+// ----------------------------------------------------------------------------
 bool GLProgram::SetUniform1i(const string &name, int v0) 
 { 
 	GLint loc = glGetUniformLocation(id, name.c_str());
