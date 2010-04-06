@@ -10,6 +10,10 @@
 
 #ifdef WIN32
 #ifndef GLBLAAT_NOTLEAN
+// Prevent macro redefinition errors
+#undef WIN32_LEAN_AND_MEAN
+#undef VC_EXTRALEAN
+#undef NOMINMAX
 // No need to include too much
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
